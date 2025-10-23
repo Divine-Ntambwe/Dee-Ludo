@@ -1,0 +1,51 @@
+:root{
+    --bg1:#2b0b3a;
+    --bg2:#6a2fb3;
+    --card:#3b0f58;
+    --accent1:#b689ff;
+    --accent2:#8f5dff;
+    --accent3:#0022ff;
+    --white: #ffffff;
+}
+button{
+    width: 20%;
+}
+
+.splashContainer{
+    height:100vh;
+    width:100vw;
+    /* linear-gradient(135deg, var(--bg1), var(--bg2)); */
+    display:flex;
+    flex-direction: column;
+    /* background-color: black; */
+    justify-content:center;
+    /* align-items:center; */
+}
+
+.splashContainer h1{
+color: var(--card);
+font-size: 4em;
+letter-spacing: 20px;
+font-family: "BBH Sans Bogle", sans-serif;
+text-align: center;
+/* text-shadow: 20px 10px 20px var(--accent1), 0 0 30px var(--accent2); */
+
+}
+
+.carAnimation{
+    position: absolute;
+    z-index: -1;
+    width: 100vw;
+    height: 100vh;
+}
+
+.canvasContainer{
+    width: 100vw;
+    height: 100vh;
+    background-color: #3700ff;
+    z-index: 2;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+       
