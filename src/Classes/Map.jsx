@@ -1,8 +1,8 @@
 import React, { useEffect } from 'react'
 
+export const dim = 700;
 function drawMap(canvas) {
       const ctx = canvas.getContext("2d");
-      const dim = 700;
       const startBlockLength = 200;
       let hop = 0;
   class startBlock {

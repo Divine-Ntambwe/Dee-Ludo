@@ -5,20 +5,20 @@ import './App.css'
 import { Route, BrowserRouter as Router, Routes } from 'react-router-dom'
 import Splash from './Pages/Splash';
 import { createContext } from 'react'
-export const CanvasContext = createContext();
+export const TokensContext = createContext();
 function App() {
-  const canvas = useRef();
+   const [bluePositions,setBluePositions] = useState(null)
   
   return (
     <>
-    <canvas style={{display:"none"}} ref={canvas}/>
-    <CanvasContext.Provider value={canvas.current}>
+   
+    <TokensContext.Provider value={{bluePositions,setBluePositions}}>
     <Router>
       <Routes>
         <Route path='/' element={<Splash/>} />
       </Routes>
     </Router>
-    </CanvasContext.Provider>
+    </TokensContext.Provider>
     </>
   )
 }
