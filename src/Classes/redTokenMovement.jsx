@@ -1,12 +1,10 @@
-import { useContext } from "react";
-import { TokensContext } from "../App";
 
-export class blueTokenObj {
-  constructor(styles, setBluePositions) {
-    this.token1 = { x: 32, y: 75, block: 0 };
-    this.token2 = { x: 32, y: 65, block: 0 };
-    this.token3 = { x: 37, y: 75, block: 0 };
-    this.token4 = { x: 37, y: 65, block: 0 };
+export class redTokenObj {
+  constructor(styles, setRedPositions) {
+    this.token1 = { x: 32, y: 95, block: 0 };
+    this.token2 = { x: 32, y: 105, block: 0 };
+    this.token3 = { x: 37, y: 105, block: 0 };
+    this.token4 = { x: 37, y: 95, block: 0 };
     this.playingTokens = [];
     this.styles = styles;
     this.setBluePositions = setBluePositions;
