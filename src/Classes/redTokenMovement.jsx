@@ -1,15 +1,15 @@
 
 export class redTokenObj {
   constructor(styles, setRedPositions) {
-    this.token1 = { x: 32, y: 95, block: 0 };
-    this.token2 = { x: 32, y: 105, block: 0 };
-    this.token3 = { x: 37, y: 105, block: 0 };
-    this.token4 = { x: 37, y: 95, block: 0 };
+    this.token1 = { x: 32, y: 10, block: 13 };
+    this.token2 = { x: 32, y: 20, block: 13 };
+    this.token3 = { x: 37, y: 10, block: 13 };
+    this.token4 = { x: 37, y: 20, block: 13 };
     this.playingTokens = [];
     this.styles = styles;
-    this.setBluePositions = setBluePositions;
-    this.startX = 44.6;
-    this.startY = 78.5;
+    this.setRedPositions = setRedPositions; //from context
+    this.startX = 30;
+    this.startY = 36;
   }
   getPositions() {
     return {
@@ -53,21 +53,9 @@ export class redTokenObj {
     let moveBy = 6;
     let turnX = 3;
     let turnY = 6;
-    if (token.block < 5) {
-      y = -moveBy;
-    } else if (token.block >= 5 && token.block < 11) {
-      y = 0;
-      x = -moveBy / 2;
-      if (token.block === 5) {
-        y = -turnY;
-        x = -turnX;
-      }
-    } else if (token.block >= 11 && token.block < 13) {
-      y = -moveBy;
-      x = 0;
-    } else if (token.block >= 13 && token.block < 18) {
-      y = 0;
-      x = moveBy / 2;
+
+    if (token.block >= 13 && token.block < 18) {
+      x = moveBy/2;
     } else if (token.block >= 18 && token.block < 24) {
       y = -moveBy;
       x = 0;
@@ -101,14 +89,29 @@ export class redTokenObj {
         y = turnY;
         x = -turnX;
       }
-    } else if (token.block >= 50 && token.block < 51) {
+    } else if (token.block >= 50 && token.block < 52) {
       y = 0;
       x = -moveBy / 2;
-    } else if (token.block >= 51 && token.block < 57) {
+      
+    } if (token.block >= 0 && token.block < 5) {
       x = 0;
       y = -moveBy;
+    }else if (token.block >= 5 && token.block < 11) {
+      y = 0;
+      x = -moveBy / 2;
+      if (token.block === 5) {
+        y = -turnY;
+        x = -turnX;
+      }
+    } else if (token.block >= 11 && token.block < 12) {
+      y = -moveBy;
+      x = 0;
+      
+    } else if (token.block > 51 && token.block < 58) {
+      y = 0;
+      x = moveBy/2;
+      
     }
-
     return [x, y];
   }
 
@@ -140,15 +143,18 @@ export class redTokenObj {
     const step = () => {
       count++;
       token.block += 1;
+      
       [x, y] = this.tokenMoves(token, 0, 0, dice);
-      if (token.block === 57) {
+      if (token.block === 58) {
         y = 0;
         x = 0;
       }
-      console.log(dice)
-
+      
+      console.log(token.block)
       if (count > dice) return;
-      let pos = { ...token, x: (token.x += x), y: (token.y += y) };
+      if (token.block === 51) token.block = -1;
+      if (token.block === 11) token.block = 51;
+      let pos = { x: (token.x += x), y: (token.y += y),block:token.block };
       switch (tokenNo) {
         case "1":
           this.token1 = pos;
@@ -165,8 +171,9 @@ export class redTokenObj {
           this.token4 = pos;
           break;
       }
-      this.setBluePositions(this.getPositions());
-      setTimeout(step, 500);
+      this.setRedPositions(this.getPositions());
+    
+      setTimeout(step, 800);
     };
     setTimeout(() => {
       tokenObj.classList.remove(this.styles.bounce);

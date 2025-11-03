@@ -1,0 +1,111 @@
+:root{
+    --bg1:#2b0b3a;
+    --bg2:#6a2fb3;
+    --card:#3b0f58;
+    --accent1:#b689ff;
+    --accent2:#8f5dff;
+    --accent3:#0022ff;
+    --white: #ffffff;
+}
+button{
+    width: 20%;
+}
+
+.splashContainer{
+    height:100vh;
+    width:100vw;
+    display:grid;
+    grid-template-columns: 25vw auto 25vw;
+    flex-direction: column; 
+    justify-content:center;
+    align-items:center;
+    background-color:black;
+    overflow: hidden;
+}
+
+.splashContainer h1{
+color: var(--card);
+font-size: 4em;
+letter-spacing: 20px;
+font-family: "BBH Sans Bogle", sans-serif;
+text-align: center;
+/* text-shadow: 20px 10px 20px var(--accent1), 0 0 30px var(--accent2); */
+
+}
+
+.mapContainer{
+    width: 50vw;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    /* pointer-events: none; */
+}
+.map{
+    /* flex:0.5; */
+    width: 45vw;
+    height: 95vh;
+    border: 1px solid black;
+    /* object-fit: fill; */
+}
+
+.tokens{
+    width: 5vw;
+    height: 10.5vh;
+    position: absolute;  
+    transition: 0.5s;
+    transform-style: preserve-3d;
+    /* transform: scaleY(0.8); */
+}
+
+@keyframes bounce {
+    0%{transform:scaleX(1)}
+    100%{transform:scaleX(0.9)}
+}
+.bounce {
+  animation: bounce 0.25s infinite alternate;
+}
+
+@keyframes active {
+    0%{transform:scale(1)}
+    100%{transform:scale(0.9)}
+}
+
+.active {
+    animation: active 0.5s infinite alternate;
+}
+
+.diceContainer{
+    font-size: 10em;
+    transform-style: preserve-3d;
+    perspective: 300px;
+    text-align: center;
+}
+
+.dice{
+    animation: clickDice 0.5s infinite alternate;
+    border-radius: 8px;
+}
+
+@keyframes clickDice {
+    0%{
+        border: 1px solid ;
+        opacity: 0.8;
+    }
+    100%{
+        border: 2px solid;
+        opacity: 1;
+    }
+}
+
+
+
+@keyframes diceRoll {
+    0%{transform: rotate(-2deg);}
+    50%{transform: rotate(0deg);}
+    100%{transform: rotate(2deg);}
+}
+
+.diceRoll {
+    animation: diceRoll 0.1s infinite alternate ;
+}
