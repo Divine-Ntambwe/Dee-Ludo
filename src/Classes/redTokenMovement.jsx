@@ -20,6 +20,13 @@ export class redTokenObj {
     };
   }
 
+  setPositions(position){
+    this[position[0]] = position[1];
+    let num = this.playingTokens.indexOf(position[0][position[0].length-1])
+    console.log(position[0][position[0].length-1], position[0])
+    this.playingTokens.splice(num,1)
+  }
+
   getPlayingTokens() {
     return this.playingTokens;
   }
@@ -149,8 +156,6 @@ export class redTokenObj {
         y = 0;
         x = 0;
       }
-      
-      console.log(token.block)
       if (count > dice) return;
       if (token.block === 51) token.block = -1;
       if (token.block === 11) token.block = 51;
@@ -178,6 +183,6 @@ export class redTokenObj {
     setTimeout(() => {
       tokenObj.classList.remove(this.styles.bounce);
     }, dice * 500);
-    return step;
+    return [step,token.block];
   }
 }

@@ -22,6 +22,13 @@ export class blueTokenObj {
     };
   }
 
+  setPositions(position){
+    this[position[0]] = position[1];
+    let num = this.playingTokens.indexOf(position[0][position[0].length-1])
+    console.log(position[0][position[0].length-1], position[0])
+    this.playingTokens.splice(num,1)
+  }
+
   getPlayingTokens() {
     return this.playingTokens;
   }
@@ -143,7 +150,7 @@ export class blueTokenObj {
     const step = () => {
       count++;
       token.block += 1;
-      console.log(token.block);
+
 
       [x, y] = this.tokenMoves(token, 0, 0, dice);
       if (token.block === 57) {
@@ -176,6 +183,6 @@ export class blueTokenObj {
     setTimeout(() => {
       tokenObj.classList.remove(this.styles.bounce);
     }, dice * 500);
-    return step;
+    return [step,token.block];
   }
 }
