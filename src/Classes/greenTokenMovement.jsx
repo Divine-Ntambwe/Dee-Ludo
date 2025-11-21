@@ -1,15 +1,15 @@
 
 export class greenTokenObj {
   constructor(styles, setGreenPositions) {
-    this.token1 = { x: 58, y: 10, block: 26 };
-    this.token2 = { x: 58, y: 20, block: 26 };
-    this.token3 = { x: 63, y: 10, block: 26 };
-    this.token4 = { x: 63, y: 20, block: 26 };
+    this.token1 = { x: 59.2, y: 10, block: 26 };
+    this.token2 = { x: 59.2, y: 20, block: 26 };
+    this.token3 = { x: 64.2, y: 10, block: 26 };
+    this.token4 = { x: 64.2, y: 20, block: 26 };
     this.playingTokens = [];
     this.styles = styles;
     this.setGreenPositions = setGreenPositions; //from context
-    this.startX = 50.5;
-    this.startY = 5;
+    this.startX = 51.7;
+    this.startY = 4.5;
   }
   getPositions() {
     return {
@@ -57,14 +57,16 @@ export class greenTokenObj {
   }
 
    tokenMoves(token, x, y, dice) {
-    let moveBy = 6;
-    let turnX = 3;
-    let turnY = 6;
+    // let moveYBy = 6;
+    let moveYBy = 6.2;
+    let moveXBy = 2.85;
+    let turnX = 2.9;
+    let turnY = 5.5;
 
     if (token.block >= 13 && token.block < 18) {
-      x = moveBy/2;
+      x = moveXBy;
     } else if (token.block >= 18 && token.block < 24) {
-      y = -moveBy;
+      y = -moveYBy;
       x = 0;
       if (token.block === 18) {
         y = -turnY;
@@ -72,25 +74,25 @@ export class greenTokenObj {
       }
     } else if (token.block >= 24 && token.block < 26) {
       y = 0;
-      x = moveBy / 2;
+      x = moveXBy;
     } else if (token.block >= 26 && token.block < 31) {
-      y = moveBy;
+      y = moveYBy;
       x = 0;
     } else if (token.block >= 31 && token.block < 37) {
       y = 0;
-      x = moveBy / 2;
+      x = moveXBy;
       if (token.block === 31) {
         y = turnY;
         x = turnX;
       }
     } else if (token.block >= 37 && token.block < 39) {
-      y = moveBy;
+      y = moveYBy;
       x = 0;
     } else if (token.block >= 39 && token.block < 44) {
       y = 0;
-      x = -moveBy / 2;
+      x = -moveXBy;
     } else if (token.block >= 44 && token.block < 50) {
-      y = moveBy;
+      y = moveYBy;
       x = 0;
       if (token.block === 44) {
         y = turnY;
@@ -98,24 +100,24 @@ export class greenTokenObj {
       }
     } else if (token.block >= 50 && token.block < 52) {
       y = 0;
-      x = -moveBy / 2;
+      x = -moveXBy;
       
     } if (token.block >= 0 && token.block < 5) {
       x = 0;
-      y = -moveBy;
+      y = -moveYBy;
     }else if (token.block >= 5 && token.block < 11) {
       y = 0;
-      x = -moveBy / 2;
+      x = -moveXBy;
       if (token.block === 5) {
         y = -turnY;
         x = -turnX;
       }
     } else if (token.block >= 11 && token.block < 13) {
-      y = -moveBy;
+      y = -moveYBy;
       x = 0;
       
     } else if (token.block > 51 && token.block < 58) {
-      y = moveBy;
+      y = moveYBy;
       x = 0;
       
     }
@@ -145,7 +147,7 @@ export class greenTokenObj {
     }
     let diffY = token.y - this.startY;
     let diffX = token.y - this.startY;
-    if ((token.block + dice) > 57) return ;
+    if ((token.block + dice) > 57) return [()=>{return false},token.block];
     tokenObj.classList.add(this.styles.bounce);
     const step = () => {
       count++;
@@ -180,7 +182,7 @@ export class greenTokenObj {
       }
       this.setGreenPositions(this.getPositions());
     
-      setTimeout(step, 800);
+      setTimeout(step, 500);
     };
     setTimeout(() => {
       tokenObj.classList.remove(this.styles.bounce);

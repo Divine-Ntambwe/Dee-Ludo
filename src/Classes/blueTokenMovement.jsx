@@ -3,15 +3,16 @@ import { TokensContext } from "../App";
 
 export class blueTokenObj {
   constructor(styles, setBluePositions) {
-    this.token1 = { x: 32, y: 75, block: 0 };
-    this.token2 = { x: 32, y: 65, block: 0 };
-    this.token3 = { x: 37, y: 75, block: 0 };
-    this.token4 = { x: 37, y: 65, block: 0 };
+    this.token1 = { x: 33.2, y: 75, block: 0 };
+    this.token2 = { x: 33.2, y: 65, block: 0 };
+    this.token3 = { x: 38.2, y: 75, block: 0 };
+    this.token4 = { x: 38.2, y: 65, block: 0 };
     this.playingTokens = [];
+    this.tokensWon = []
     this.styles = styles;
     this.setBluePositions = setBluePositions;
-    this.startX = 44.6;
-    this.startY = 78.5;
+    this.startX = 45.8;
+    this.startY = 77.8;
   }
   getPositions() {
     return {
@@ -34,7 +35,6 @@ export class blueTokenObj {
   }
 
   takeOut(num) {
-    console.log(num)
     switch (num) {
       case "1":
         this.token1 = { ...this.token1, x: this.startX, y: this.startY };
@@ -60,26 +60,28 @@ export class blueTokenObj {
   }
 
   tokenMoves(token, x, y, dice) {
-    let moveBy = 6;
-    let turnX = 3;
-    let turnY = 6;
+    let moveYBy = 6.2;
+    let moveXBy = 2.85;
+    let turnX = 2.9;
+    let turnY = 5.5;
     if (token.block < 5) {
-      y = -moveBy;
+      y = -moveYBy;
     } else if (token.block >= 5 && token.block < 11) {
       y = 0;
-      x = -moveBy / 2;
+      x = -moveXBy;
       if (token.block === 5) {
         y = -turnY;
         x = -turnX;
       }
     } else if (token.block >= 11 && token.block < 13) {
-      y = -moveBy;
+
+      y = -moveYBy;
       x = 0;
     } else if (token.block >= 13 && token.block < 18) {
       y = 0;
-      x = moveBy / 2;
+      x = moveXBy;
     } else if (token.block >= 18 && token.block < 24) {
-      y = -moveBy;
+      y = -moveYBy;
       x = 0;
       if (token.block === 18) {
         y = -turnY;
@@ -87,25 +89,25 @@ export class blueTokenObj {
       }
     } else if (token.block >= 24 && token.block < 26) {
       y = 0;
-      x = moveBy / 2;
+      x = moveXBy;
     } else if (token.block >= 26 && token.block < 31) {
-      y = moveBy;
+      y = moveYBy;
       x = 0;
     } else if (token.block >= 31 && token.block < 37) {
       y = 0;
-      x = moveBy / 2;
+      x = moveXBy;
       if (token.block === 31) {
         y = turnY;
         x = turnX;
       }
     } else if (token.block >= 37 && token.block < 39) {
-      y = moveBy;
+      y = moveYBy;
       x = 0;
     } else if (token.block >= 39 && token.block < 44) {
       y = 0;
-      x = -moveBy / 2;
+      x = -moveXBy;
     } else if (token.block >= 44 && token.block < 50) {
-      y = moveBy;
+      y = moveYBy;
       x = 0;
       if (token.block === 44) {
         y = turnY;
@@ -113,10 +115,10 @@ export class blueTokenObj {
       }
     } else if (token.block >= 50 && token.block < 51) {
       y = 0;
-      x = -moveBy / 2;
+      x = -moveXBy;
     } else if (token.block >= 51 && token.block < 57) {
       x = 0;
-      y = -moveBy;
+      y = -moveYBy;
     }
 
     return [x, y];
@@ -145,17 +147,19 @@ export class blueTokenObj {
     }
     let diffY = token.y - this.startY;
     let diffX = token.y - this.startY;
-    if ((token.block + dice) > 57) return ;
-    tokenObj.classList.add(this.styles.bounce);
+    if ((token.block + dice) > 57) return [()=>{return false},token.block] ;
+    // tokenObj.classList.add(this.styles.bounce);
     const step = () => {
       count++;
       token.block += 1;
 
 
       [x, y] = this.tokenMoves(token, 0, 0, dice);
+      console.log(token.block)
       if (token.block === 57) {
         y = 0;
         x = 0;
+        this.tokensWon += 1;
       }
       
 

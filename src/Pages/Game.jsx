@@ -13,6 +13,9 @@ import { redTokenObj } from "../Classes/redTokenMovement";
 import { greenTokenObj } from "../Classes/greenTokenMovement";
 import { yellowTokenObj } from "../Classes/yellowTokenMovement";
 import map from "../assets/Map.png";
+import Galaxy from "../Components/Galaxy";
+import Particles from "../Components/Particles";
+import Dice from "../Components/Dice";
 
 function Game() {
   const [currentPositions, setCurrentPositions] = useState();
@@ -52,14 +55,15 @@ function Game() {
     setGreenPositions,
     yellowPositions,
     setYellowPositions,
+    numOfPlayers,
   } = useContext(TokensContext);
+  let random = null;
   const [allBlueTokens, setAllBlueTokens] = useState();
   const [allRedTokens, setAllRedTokens] = useState();
   const [allGreenTokens, setAllGreenTokens] = useState();
   const [allYellowTokens, setAllYellowTokens] = useState();
-
-  const [diceName, setDiceName] = useState("six");
-  const [diceNum, setDiceNum] = useState(6);
+  const [diceName, setDiceName] = useState("one");
+  const [diceNum, setDiceNum] = useState(null);
   const dice = useRef();
   const [turn, setTurn] = useState(0);
   const mapContainer = useRef();
@@ -86,68 +90,108 @@ function Game() {
     setAllYellowTokens(yellowTokens);
     setYellowPositions(yellowTokens.getPositions());
 
-    // setCurrentPositions([...initialPositions])
+    // setCurrentPositions([...initialPositions]);
+    blueDice.current.classList.add(styles.dice);
 
-    dice.current.classList.add(styles.dice);
+    // dice.current.classList.add(styles.dice);
   }, []);
 
-  function diceOn() {
-    diceContainer.current.style.pointerEvents = "all";
-    dice.current.classList.add(styles.dice);
+  function diceOn(nextDice,currentDice) {
+    nextDice.style.pointerEvents = "all";
+    nextDice.classList.add(styles.dice);
+    currentDice && currentDice.classList.remove(styles.dice)
     mapContainer.current.style.pointerEvents = "none";
+
   }
-  function diceOff() {
+  function diceOff(currentDice) {
     mapContainer.current.style.pointerEvents = "none";
-    diceContainer.current.style.pointerEvents = "none";
-    dice.current.classList.remove(styles.dice);
-    dice.current.classList.add(styles.diceRoll);
+    currentDice.current.style.pointerEvents = "none";
   }
-  function mapOn() {
+  function mapOn(mapSection) {
     mapContainer.current.style.pointerEvents = "all";
+    mapSection.classList.add(styles.homeIndicator)
   }
-  function mapOff() {
+  function mapOff(mapSection,time = 0) {
     mapContainer.current.style.pointerEvents = "none";
+    setTimeout(()=>{
+      mapSection.classList.remove(styles.homeIndicator)
+    },time)
   }
-  function handleDiceRoll(e) {
-    diceOff();
+  const blueDice = useRef(),
+    redDice = useRef(),
+    greenDice = useRef(),
+    yellowDice = useRef();
+  const allDice = [
+    blueDice.current,
+    redDice.current,
+    greenDice.current,
+    yellowDice.current,
+  ];
+
+  const blueOverlay = useRef(),
+  redOverlay = useRef(),
+  greenOverlay = useRef(),
+  yellowOverlay = useRef();
+
+  const allMapOverlay =[
+    blueOverlay.current,
+    redOverlay.current,
+    greenOverlay.current,
+    yellowOverlay.current,
+
+  ]
+
+  function handleDiceRoll() {
+    const diceNum = Number(localStorage.getItem("diceNum")) - 1;
+    const dice = allDice[turn];
     const diceNums = ["one", "two", "three", "four", "five", "six"];
-    const randomNum = Math.floor(Math.random() * 6); //give 0 - 5 to pick from above array
-    setDiceNum(randomNum + 1);
-    setTimeout(() => {
-      //dice Finished rolling
-      setDiceName(diceNums[randomNum]);
-      e.target.classList.remove(styles.diceRoll);
-      mapOn();
-    }, 1000);
-    if (randomNum + 1 === 6) {
-      mapOn();
-      return;
+      
+  
+
+    if (diceNum + 1 === 6) {
+      mapOn(allMapOverlay[turn]);
+      return; 
     }
 
     const hasTokensOut = tokensOut.find((i) => {
-      return i.startsWith(e.target.id);
+      return i.id.startsWith(dice.id);
     });
 
-    if (hasTokensOut) return;
+    if (hasTokensOut){
+      setDiceName(diceNums[diceNum]);
+      mapOn(allMapOverlay[turn]);
+      return
+    } 
     setTimeout(() => {
-      mapOff();
-      diceOn();
-      if (turn === 3) {
+      mapOff(allMapOverlay[turn]);
+      let inc = numOfPlayers === 2 ? 2 : 1;
+      let minus = numOfPlayers >= 3 ? 1 : 0;
+      if (turn >= numOfPlayers - minus) {
         setTurn(0);
+        diceOn(allDice[0]);
       } else {
-        setTurn(turn + 1);
+        setTurn(turn + inc);
+        diceOn(allDice[turn + inc]);
       }
-    }, 2000);
+    }, 0);
   }
 
   function handleCollisionDetection(token, currentBlock, playerBlocks) {
     let newPositions = null;
+    let safeBlocks = [1, 9,14, 22,27, 35,40, 48];
+    let startBlocks = [0,13,26,39]
+    let n = []
     Object.entries(playerBlocks).map(([player, block]) => {
+      // console.log(block,currentBlock)
+      // console.log(player,token)
       if (
         block === currentBlock &&
         player !== token &&
-        player.slice(0, player.length - 1) !== token.slice(0, token.length - 1)
+        player.slice(0, player.length - 1) !==
+          token.slice(0, token.length - 1) &&
+        !safeBlocks.includes(block)
       ) {
+        alert("he")
         let color = player.slice(0, player.indexOf("token"));
         let setColorPositions;
         let colorPositions;
@@ -189,32 +233,56 @@ function Game() {
         };
         setColorPositions(newPositions);
         tokensObj.setPositions([tokenName, initialPositions[num][tokenName]]);
+      } else if (block === currentBlock && player !== token) {
+        n.push(document.getElementById(`${token}`));
+        n.push(document.getElementById(`${player}`));
+        
+      }else if ([0,13,26,39].includes(block) || [0,13,26,39].includes(currentBlock)){
+
+      }
+      if (n.length > 0){
+       const tokensOnBlock = [...new Set(n)];
+       tokensOnBlock.map((token,i)=>{
+        token.style.transform = `scale(0.8) translateX(${-5*n.length + i*10}px)`
+       })
       }
     });
     return newPositions;
   }
+  
 
   function handleMoveBlue(e) {
     if (turn !== 0) return;
 
     const token = e.target.id;
+    e.target.style.margin = "0";
+    e.target.style.transform = "scale(1)";
     let num = token.slice(token.indexOf(`/\d/`), token.length);
     //REMOVE +1
-    if (!allBlueTokens.getPlayingTokens().includes(num) ) {
+    if (!allBlueTokens.getPlayingTokens().includes(num) && diceNum === 6) {
       //takes one blue token out
-      mapOff();
       setBluePositions(allBlueTokens.takeOut(num));
-      dice.current.classList.add(styles.dice);
-      setTokensOut([...tokensOut, token]);
-
+      // dice.current.classList.add(styles.dice);
+      setTokensOut([...tokensOut, e.target]);
+      setCurrentPositions({ ...currentPositions, [token]: 1 })
+      handleCollisionDetection(
+          token,
+          1,
+          { ...currentPositions, [token]: 1 },
+      )
+      
       setTimeout(() => {
-        diceOn();
+        mapOff(allMapOverlay[turn]);
+        diceOn(allDice[0]);
       }, 600);
+      
       return;
-    } else if (allBlueTokens.getPlayingTokens().includes(num)) {
-      mapOff();
-      allBlueTokens.moveToken(e.target, num, diceNum)[0]();
+    } else if (allBlueTokens.getPlayingTokens().includes(num) ) {
+      
+      const canMove = allBlueTokens.moveToken(e.target, num, diceNum)[0]();
+      if (canMove === false) return
       setBluePositions(allBlueTokens.getPositions());
+      mapOff(allMapOverlay[turn],diceNum*600);
       setTimeout(() => {
         let block = allBlueTokens.moveToken(e.target, num, diceNum)[1] + 1;
         setCurrentPositions({ ...currentPositions, [token]: block });
@@ -224,13 +292,20 @@ function Game() {
           { ...currentPositions, [token]: block },
           setBluePositions
         );
-        console.log(block)
-        if (turn === 3) {
+
+        if (diceNum === 6){
+          diceOn(allDice[0])
+          return
+        } 
+        let inc = numOfPlayers === 2 ? 2 : 1;
+        let minus = numOfPlayers >= 3 ? 1 : 0;
+        if (turn >= numOfPlayers - minus) {
           setTurn(0);
+          diceOn(allDice[0],allDice[turn]);
         } else {
-          setTurn(turn + 1);
+          setTurn(turn + inc);
+          diceOn(allDice[turn + inc],allDice[turn]);
         }
-        diceOn();
       }, 700 * diceNum);
     }
   }
@@ -238,23 +313,30 @@ function Game() {
 
   function handleMoveRed(e) {
     if (turn !== 1) return;
-
+    e.target.style.margin = "0";
+    e.target.style.transform = "scale(1)";
     const token = e.target.id;
     let num = token.slice(token.indexOf(`/\d/`), token.length);
     //REMOVE +1 and add === 6
     if (!allRedTokens.getPlayingTokens().includes(num) && diceNum === 6) {
       //takes one green token out
-      mapOff();
       setRedPositions(allRedTokens.takeOut(num));
-      dice.current.classList.add(styles.dice);
-      setTokensOut([...tokensOut, token]);
+      // dice.current.classList.add(styles.dice);
+      setTokensOut([...tokensOut, e.target]);
+      setCurrentPositions({ ...currentPositions, [token]: 0 })
+      handleCollisionDetection(
+          token,
+          13,
+          { ...currentPositions, [token]: 13 },
+      )
       setTimeout(() => {
-        diceOn();
+        mapOff(allMapOverlay[turn]);
+        diceOn(allDice[1]);
       }, 600);
       return;
     } else if (allRedTokens.getPlayingTokens().includes(num)) {
-      mapOff();
-      allRedTokens.moveToken(e.target, num, diceNum)[0]();
+      const canMove = allRedTokens.moveToken(e.target, num, diceNum)[0]();
+      if (canMove === false) return
       setRedPositions(allRedTokens.getPositions());
       setTimeout(() => {
         let block = allRedTokens.moveToken(e.target, num, diceNum)[1] + 1;
@@ -265,13 +347,21 @@ function Game() {
           { ...currentPositions, [token]: block },
           setRedPositions
         );
-        console.log(block)
-        if (turn === 3) {
+
+        mapOff(allMapOverlay[turn]);
+          if (diceNum === 6){
+          diceOn(allDice[1])
+          return
+        } 
+        let inc = numOfPlayers === 2 ? 2 : 1;
+        let minus = numOfPlayers >= 3 ? 1 : 0;
+        if (turn >= numOfPlayers - minus) {
           setTurn(0);
+          diceOn(allDice[0]);
         } else {
-          setTurn(turn + 1);
+          setTurn(turn + inc);
+          diceOn(allDice[turn + inc]);
         }
-        diceOn();
       }, 700 * diceNum);
     }
   }
@@ -280,22 +370,31 @@ function Game() {
     if (turn !== 2) return;
 
     const token = e.target.id;
+     e.target.style.margin = "0";
+    e.target.style.transform = "scale(1)";
     let num = token.slice(token.indexOf(`/\d/`), token.length);
     console.log(token);
     //REMOVE +1 and diceNum === 6
     if (!allGreenTokens.getPlayingTokens().includes(num) && diceNum === 6) {
       //takes one green token out
-      mapOff();
       setGreenPositions(allGreenTokens.takeOut(num));
-      dice.current.classList.add(styles.dice);
-      setTokensOut([...tokensOut, token]);
+      // dice.current.classList.add(styles.dice);
+     setTokensOut([...tokensOut, e.target]);
+      setCurrentPositions({ ...currentPositions, [token]: 26 })
+      handleCollisionDetection(
+          token,
+          26,
+          { ...currentPositions, [token]: 26 },
+      )
       setTimeout(() => {
-        diceOn();
+        mapOff(allMapOverlay[turn]);
+        diceOn(allDice[2]);
       }, 600);
       return;
     } else if (allGreenTokens.getPlayingTokens().includes(num)) {
-      mapOff();
-      allGreenTokens.moveToken(e.target, num, diceNum)[0]();
+      
+      const canMove = allGreenTokens.moveToken(e.target, num, diceNum)[0]();
+      if (canMove === false) return
       setGreenPositions(allGreenTokens.getPositions());
       setTimeout(() => {
         let block = allGreenTokens.moveToken(e.target, num, diceNum)[1] + 1;
@@ -306,130 +405,251 @@ function Game() {
           { ...currentPositions, [token]: block },
           setGreenPositions
         );
-        if (turn === 3) {
+        mapOff(allMapOverlay[turn]);
+          if (diceNum === 6){
+          diceOn(allDice[2])
+          return
+        } 
+        let inc = numOfPlayers === 2 ? 2 : 1;
+        let minus = numOfPlayers >= 3 ? 1 : 0;
+        if (turn >= numOfPlayers - minus) {
           setTurn(0);
+          diceOn(allDice[0]);
         } else {
-          setTurn(turn + 1);
+          setTurn(turn + inc);
+          diceOn(allDice[turn + inc]);
         }
-        diceOn();
       }, 700 * diceNum);
     }
   }
 
   function handleMoveYellow(e) {
     if (turn !== 3) return;
-
+    e.target.style.margin = "0";
+    e.target.style.transform = "scale(1)";
     const token = e.target.id;
     let num = token.slice(token.indexOf(`/\d/`), token.length);
     //REMOVE +1 and diceNum === 6
     if (!allYellowTokens.getPlayingTokens().includes(num) && diceNum === 6) {
-      //takes one red token out
-      mapOff();
+      //takes one yellow token out
       setYellowPositions(allYellowTokens.takeOut(num));
-      dice.current.classList.add(styles.dice);
-      setTokensOut([...tokensOut, token]);
+      // dice.current.classList.add(styles.dice);
+      setTokensOut([...tokensOut, e.target]);
+      setCurrentPositions({ ...currentPositions, [token]: 0 })
+      handleCollisionDetection(
+          token,
+          39,
+          { ...currentPositions, [token]: 39 },
+      )
       setTimeout(() => {
+        mapOff(allMapOverlay[turn]);
         diceOn();
       }, 600);
       return;
     } else if (allYellowTokens.getPlayingTokens().includes(num)) {
-      mapOff();
-      allYellowTokens.moveToken(e.target, num, diceNum)[0]();
+    
+      const canMove = allYellowTokens.moveToken(e.target, num, diceNum)[0]();
+      if (canMove === false) return
       setYellowPositions(allYellowTokens.getPositions());
       setTimeout(() => {
         let block = allYellowTokens.moveToken(e.target, num, diceNum)[1] + 1;
         setCurrentPositions({ ...currentPositions, [token]: block });
-          handleCollisionDetection(
-            token,
-            block,
-            { ...currentPositions, [token]: block },
-            setYellowPositions
-          );
-        if (turn === 3) {
+        handleCollisionDetection(
+          token,
+          block,
+          { ...currentPositions, [token]: block },
+          setYellowPositions
+        );
+        mapOff(allMapOverlay[turn]);
+          if (diceNum === 6){
+          diceOn(allDice[3])
+          return
+        } 
+        let inc = numOfPlayers === 2 ? 2 : 1;
+        let minus = numOfPlayers >= 3 ? 1 : 0;
+        if (turn >= numOfPlayers - minus) {
           setTurn(0);
+          diceOn(allDice[0]);
         } else {
-          setTurn(turn + 1);
+          setTurn(turn + inc);
+          diceOn(allDice[turn + inc]);
         }
-        diceOn();
       }, 1000 * diceNum);
     }
   }
 
   return (
-    <div className={styles.splashContainer}>
-      <div
-        style={{ color: `${colors[turn]}` }}
-        onClick={handleDiceRoll}
-        className={styles.diceContainer}
-        ref={diceContainer}
-        id={playerColors[turn]}
-      >
-        <i
+    <>
+      <div className={styles.homeIndicatorCont}>
+        <div className={styles.mapOverlay}>
+         <div ref={redOverlay}></div>
+          <div ref={greenOverlay}></div>
+          <div ref={blueOverlay}></div>
+          <div ref={yellowOverlay}></div>
+          
+        </div>
+      </div>
+      <div className={styles.gameBg}>
+        <Particles />
+      </div>
+      <div className={styles.splashContainer}>
+        <div
+          // onClick={handleDiceRoll}
+          className={styles.diceContainer}
+          ref={diceContainer}
           id={playerColors[turn]}
-          ref={dice}
-          className={`fa-solid fa-dice-${diceName}`}
-        ></i>
-      </div>
-      <div className={styles.mapContainer} ref={mapContainer}>
-        <img src={map} className={styles.map} />
-        {bluePositions &&
-          Object.entries(bluePositions).map(([token, pos]) => (
-            <>
+        >
+          <div
+            style={{ border: "10px solid #b51616" }}
+            className={styles.diceContainers}
+            ref={redDice}
+            id="red"
+          >
+            {turn === 1 && (
+              <div
+                onClick={() => {
+                  redDice.current.classList.remove(styles.dice);
+                  diceOff(redDice);
+                  setTimeout(() => {
+                    handleDiceRoll();
+                  }, 3000);
+                }}
+              >
+                <Dice setDiceNum={setDiceNum} />
+              </div>
+            )}
+          </div>
+
+          <div
+            id="blue"
+            ref={blueDice}
+            style={{ border: "10px solid #07b1ea" }}
+            className={`${styles.diceContainers}`}
+          >
+            {turn === 0 && (
+              <div
+                onClick={() => {
+                  blueDice.current.classList.remove(styles.dice);
+                  diceOff(blueDice);
+                  setTimeout(() => {
+                    handleDiceRoll();
+                  }, 3000);
+                }}
+              >
+                <Dice setDiceNum={setDiceNum} />
+              </div>
+            )}
+          </div>
+        </div>
+        <div className={styles.mapContainer} ref={mapContainer}>
+          <img src={map} className={styles.map} />
+          {bluePositions &&
+            Object.entries(bluePositions).map(([token, pos]) => (
+              <>
+                <img
+                  id={`blue${token}`}
+                  onClick={handleMoveBlue}
+                  className={`${styles.tokens}`}
+                  src={blueToken}
+                  style={{ left: `${pos.x}vw`, top: `${pos.y}vh` }}
+                />
+              </>
+            ))}
+          {redPositions &&
+            numOfPlayers !== 2 &&
+            Object.entries(redPositions).map(([token, pos]) => (
               <img
-                id={`blue${token}`}
-                onClick={handleMoveBlue}
-                className={`${styles.tokens}`}
-                src={blueToken}
-                style={{ left: `${pos.x}vw`, top: `${pos.y}vh` }}
+                id={`red${token}`}
+                onClick={handleMoveRed}
+                className={styles.tokens}
+                src={redToken}
+                style={{
+                  left: `${pos.x}vw`,
+                  top: `${pos.y}vh`,
+                }}
               />
-            </>
-          ))}
-        {redPositions &&
-          Object.entries(redPositions).map(([token, pos]) => (
-            <img
-              id={`red${token}`}
-              onClick={handleMoveRed}
-              className={styles.tokens}
-              src={redToken}
-              style={{
-                left: `${pos.x}vw`,
-                top: `${pos.y}vh`,
-              }}
-            />
-          ))}
+            ))}
 
-        {greenPositions &&
-          Object.entries(greenPositions).map(([token, pos]) => (
-            <img
-              id={`green${token}`}
-              onClick={handleMoveGreen}
-              className={styles.tokens}
-              src={greenToken}
-              style={{
-                left: `${pos.x}vw`,
-                top: `${pos.y}vh`,
-              }}
-            />
-          ))}
+          {greenPositions &&
+            Object.entries(greenPositions).map(([token, pos]) => (
+              <img
+                id={`green${token}`}
+                onClick={handleMoveGreen}
+                className={styles.tokens}
+                src={greenToken}
+                style={{
+                  left: `${pos.x}vw`,
+                  top: `${pos.y}vh`,
+                }}
+              />
+            ))}
 
-        {yellowPositions &&
-          Object.entries(yellowPositions).map(([token, pos]) => (
-            <img
-              id={`yellow${token}`}
-              onClick={handleMoveYellow}
-              className={styles.tokens}
-              src={yellowToken}
-              style={{
-                left: `${pos.x}vw`,
-                top: `${pos.y}vh`,
-              }}
-            />
-          ))}
+          {yellowPositions &&
+            numOfPlayers === 4 &&
+            Object.entries(yellowPositions).map(([token, pos]) => (
+              <img
+                id={`yellow${token}`}
+                onClick={handleMoveYellow}
+                className={styles.tokens}
+                src={yellowToken}
+                style={{
+                  left: `${pos.x}vw`,
+                  top: `${pos.y}vh`,
+                }}
+              />
+            ))}
+        </div>
+
+        <div
+          // onClick={handleDiceRoll}
+          className={styles.diceContainer}
+          ref={diceContainer}
+          id={playerColors[turn]}
+        >
+          <div
+            id="green"
+            ref={greenDice}
+            style={{ border: "10px solid #057f05" }}
+            className={`${styles.diceContainers}`}
+          >
+            {turn === 2 && (
+              <div
+                onClick={() => {
+                  greenDice.current.classList.remove(styles.dice);
+                  diceOff(greenDice);
+                  setTimeout(() => {
+                    handleDiceRoll();
+                  }, 3000);
+                }}
+              >
+                <Dice setDiceNum={setDiceNum} />
+              </div>
+            )}
+          </div>
+
+          <div
+            id="yellow"
+            ref={yellowDice}
+            style={{ border: "10px solid #f1f116" }}
+            className={`${styles.diceContainers}`}
+          >
+            {turn === 3 && (
+              <div
+                onClick={() => {
+                  yellowDice.current.classList.remove(styles.dice);
+                  diceOff(yellowDice);
+                  setTimeout(() => {
+                    handleDiceRoll();
+                  }, 3000);
+                }}
+              >
+                <Dice setDiceNum={setDiceNum} />
+              </div>
+            )}
+          </div>
+        </div>
       </div>
-      <div>
-        {/* <input onChange={(e)=>{setDiceNum(Number(e.target.value))}}/> */}
-      </div>
-    </div>
+    </>
   );
 }
 

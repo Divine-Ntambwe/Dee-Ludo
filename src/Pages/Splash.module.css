@@ -7,7 +7,11 @@
     align-items: center;
     justify-content: center;
     background-color: transparent;
+}
+
+.splashScreen *{
     transition: 2s;
+
 }
 
 .splashBg{
@@ -15,6 +19,8 @@
     height: 100vh;
     position: absolute;
     z-index: -1;
+    background-color: black;
+
 }
 
 .splashScreen div {
@@ -22,6 +28,7 @@
     height: 100%;
     width: 100%;
     display: grid;
+
 }
 
 .tokenContainer{
@@ -31,14 +38,14 @@
 }
 
 @keyframes tokens {
-    0%{transform: rotate(10deg);}
-    100%{transform: rotate(-10deg);}
+    0%{transform: translate(0px);}
+    100%{transform: translate(600px);}
 }
 
 .tokenContainer img {
-    width: 150px;
-    height: 150px;
-    /* animation: tokens 0.8s 0s infinite alternate; */
+    width: 50px;
+    height: 100px;
+    /* animation: tokens 2s infinite ; */
 }
 
 .splashScreen div:nth-child(2){
@@ -51,7 +58,7 @@ h1{
     font-size: 4em;
     letter-spacing: 8px;
     font-weight: 300;
-    color:white;
+    color:rgb(196, 87, 236);
     /* text-transform: uppercase; */
     text-align: center;
     /* width: 800px; */
@@ -59,26 +66,25 @@ h1{
 
 @keyframes clickButton {
     0%{
-        border: 1px solid ;
-        /* background-color: black; */
+        opacity: 0;
     }
     100%{
-        border: 8px solid;
-        /* background-color: lavender; */
+       opacity: 1;
     }
 }
 
-button {
+.openSelector {
     justify-self: center;
-    font-size: 2em;
+    font-size: 1.5em;
     width: 200px;
-    height: 70px;
-    color: black;
-    background-color: lavender;
+    height: 50px;
+    color:#c457ec;
+    background-color: #ebdff7;
     border: 2px solid white;
-    animation: clickButton 1s infinite alternate;
+    animation: clickButton 1.5s  2.5s forwards;
     border-radius: 8px;
     cursor: pointer;
+    opacity: 0;
 }
 
 
@@ -90,6 +96,36 @@ button {
 }
 
 .bgImg {
-    animation: bgImg 2s;
+    animation: bgImg 2s ease-in;
     transform: translateZ(190px);
+}
+
+#alert-dialog-title{
+    color: black
+}
+
+.selectPlayersLabel{
+    display: flex;
+    width: 35vw;
+    font-size: 2em;
+    align-items: center;
+    height: 10vh;
+    gap: 10px;
+    margin-bottom: 2vw;
+}
+
+.selectPlayersLabel img{
+width: 3.5vw;
+height: 4.5vw;
+}
+
+.selectPlayersLabel p{
+    display: inline;
+}
+
+
+input[type="radio"]{
+width: 3.5vw;
+height: 4.5vw;
+cursor: pointer ;
 }
