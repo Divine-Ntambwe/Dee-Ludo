@@ -49,13 +49,14 @@ text-align: center;
 
 .tokens{
     width: 2.5vw;
+    cursor: pointer;
     height: 10.5vh;
     position: absolute;  
     transition: 0.5s;
     transform-style: preserve-3d;
     /* border: solid; */
     padding: 0;
-    z-index: 0;
+    z-index: 0; 
     /* transform: scaleY(0.8); */
 }
 
@@ -172,7 +173,11 @@ height: 13vw;
 .mapOverlay div{
 border: 6vh solid black;
 height: 36.5vh;
-opacity: 0;
+display: flex;
+align-items: center;
+justify-content: center;
+/* opacity: 0;   */
+
 /* width: 30vw; */
 
 }
@@ -190,5 +195,20 @@ opacity: 0;
 @keyframes homeIndicator {
     0%{opacity: 0.1}
     100%{opacity: 0.4;}
+}
+
+.crown{
+    width: 20vw;
+    height: 25vh;
+}
+
+.winnerNum{
+    position: absolute;
+    font-size: 4em;
+    font-family:'Times New Roman', Times, serif;
+}
+
+.winnerInd {
+    border: none !important;
 }
 

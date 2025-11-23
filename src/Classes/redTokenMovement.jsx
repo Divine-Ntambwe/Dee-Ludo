@@ -6,10 +6,13 @@ export class redTokenObj {
     this.token3 = { x: 38.3, y: 10, block: 13 };
     this.token4 = { x: 38.3, y: 20, block: 13 };
     this.playingTokens = [];
+    this.tokensWon = 0;
     this.styles = styles;
     this.setRedPositions = setRedPositions; //from context
     this.startX = 31.4;
     this.startY = 35;
+    this.moveStatus = "ok"
+    this.tokensInStrip = []
   }
   getPositions() {
     return {
@@ -29,6 +32,10 @@ export class redTokenObj {
 
   getPlayingTokens() {
     return this.playingTokens;
+  }
+
+   getTokensInStrip(){
+    return [...new Set(this.tokensInStrip)]
   }
 
   takeOut(num) {
@@ -56,8 +63,7 @@ export class redTokenObj {
     return this.getPositions();
   }
 
-  tokenMoves(token, x, y, dice) {
-    let moveBy = 6;
+  tokenMoves(token, x, y, num) {
     let moveYBy = 6.2;
     let moveXBy = 2.85;
     let turnX = 2.9;
@@ -117,6 +123,7 @@ export class redTokenObj {
       x = 0;
       
     } else if (token.block > 51 && token.block < 58) {
+      this.tokensInStrip.push(num)
       y = 0;
       x = moveXBy;
       
@@ -124,11 +131,16 @@ export class redTokenObj {
     return [x, y];
   }
 
-  moveToken(tokenObj, tokenNo, dice) {
+  getMoveStatus(){
+    return this.moveStatus
+  }
+
+  moveToken(tokenObj, tokenNo, dice,move = true) {
     let y = 0;
     let x = 0;
     let token;
     let count = 0;
+    this.moveStatus = "ok"
     switch (tokenNo) {
       case "1":
         token = this.token1;
@@ -145,18 +157,36 @@ export class redTokenObj {
         token = this.token4;
         break;
     }
+    if (!move) return [()=>{},token.block]
    
-    if ((token.block + dice) > 57) return [()=>{return false},token.block];
+    if (token.block > 55 || token.block + dice > 56)
+      return [
+        () => {
+          return "can't play";
+        },
+        token.block,
+      ];
+
     tokenObj.classList.add(this.styles.bounce);
     const step = () => {
       count++;
       token.block += 1;
       
-      [x, y] = this.tokenMoves(token, 0, 0, dice);
-      if (token.block === 58) {
+      [x, y] = this.tokenMoves(token, 0, 0, tokenNo);
+    if (token.block === 57) {
+        //if token gets home stops it from moving
         y = 0;
         x = 0;
-      }
+        this.tokensWon += 1;
+
+        this.playingTokens.splice(this.playingTokens.indexOf(tokenNo), 1);
+        if (this.tokensWon === 4) {
+          this.moveStatus = "won!"
+        } else {
+          this.moveStatus = "tokenIn"
+          return 
+        }
+      } 
       if (count > dice) return ;
       if (token.block === 51) token.block = -1;
       if (token.block === 11) token.block = 51;
