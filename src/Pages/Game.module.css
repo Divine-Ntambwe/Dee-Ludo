@@ -210,5 +210,6 @@ justify-content: center;
 
 .winnerInd {
     border: none !important;
+    visibility: hidden;
 }
 

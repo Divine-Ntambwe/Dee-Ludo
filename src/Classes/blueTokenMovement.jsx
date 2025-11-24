@@ -141,7 +141,7 @@ export class blueTokenObj {
     let x = 0;
     let token;
     let count = 0;
-    this.moveStatus = "ok"
+    this.moveStatus = "won!"
    
     switch (tokenNo) {
       case "1":
