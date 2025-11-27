@@ -4,7 +4,7 @@ import blueToken from "../assets/blue-token.png";
 import greenToken from "../assets/green-token.png";
 import redToken from "../assets/red-token.png";
 import yellowToken from "../assets/yellow-token.png";
-import crown from "../assets/crown.png";
+import crown from "../assets/Crown.png";
 import carGif from "../assets/sedan-car-animation-gif-download-8853235.gif";
 import { TokensContext } from "../App";
 import drawMap from "../Classes/Map";
