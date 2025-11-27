@@ -11,7 +11,7 @@ function Dice({setDiceNum}) {
     
         const random = Math.floor(Math.random() * 10) ;
     
-        if (random >= 1 && random <= 6) {
+        if (random >= 1 && random <= 6)  {
             rollDice(random);
             setDiceNum(random)
             localStorage.setItem("diceNum",random)
