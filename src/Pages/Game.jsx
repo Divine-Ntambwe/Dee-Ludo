@@ -13,7 +13,7 @@ import { blueTokenObj } from "../Classes/blueTokenMovement";
 import { redTokenObj } from "../Classes/redTokenMovement";
 import { greenTokenObj } from "../Classes/greenTokenMovement";
 import { yellowTokenObj } from "../Classes/yellowTokenMovement";
-import map from "../assets/Map.png";
+import map from "../assets/map.png";
 import Galaxy from "../Components/Galaxy";
 import Particles from "../Components/Particles";
 import Dice from "../Components/Dice"; 
