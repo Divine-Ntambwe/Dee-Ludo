@@ -90,6 +90,28 @@ function Game() {
   const colors = ["#07b1ea", "#b51616", "#057f05", "#f1f116"];
   const [colorsWon, setColorsWon] = useState([]);
 
+  const blueDice = useRef(),
+    redDice = useRef(),
+    greenDice = useRef(),
+    yellowDice = useRef();
+  const allDice = [
+    blueDice.current,
+    redDice.current,
+    greenDice.current,
+    yellowDice.current,
+  ];
+
+  const blueOverlay = useRef(),
+    redOverlay = useRef(),
+    greenOverlay = useRef(),
+    yellowOverlay = useRef();
+
+  const allMapOverlay = [
+    blueOverlay.current,
+    redOverlay.current,
+    greenOverlay.current,
+    yellowOverlay.current,
+  ];
   //ON START
   useEffect(() => {
     const blueTokens = new blueTokenObj(styles, setBluePositions);
@@ -109,6 +131,7 @@ function Game() {
     setYellowPositions(yellowTokens.getPositions());
 
     mapContainer.current.style.pointerEvents = "none";
+    
     blueDice.current.classList.add(styles.dice);
 
     blueOverlay.current.style.opacity = "0";
@@ -216,28 +239,7 @@ function Game() {
       mapSection && mapSection.classList.remove(styles.homeIndicator);
     }, time);
   }
-  const blueDice = useRef(),
-    redDice = useRef(),
-    greenDice = useRef(),
-    yellowDice = useRef();
-  const allDice = [
-    blueDice.current,
-    redDice.current,
-    greenDice.current,
-    yellowDice.current,
-  ];
-
-  const blueOverlay = useRef(),
-    redOverlay = useRef(),
-    greenOverlay = useRef(),
-    yellowOverlay = useRef();
-
-  const allMapOverlay = [
-    blueOverlay.current,
-    redOverlay.current,
-    greenOverlay.current,
-    yellowOverlay.current,
-  ];
+  
 
   function autoPlay(tokenObj, color, moveFunction, diceNum) {
     if (tokenObj.getPlayingTokens().length === 1) {
@@ -587,7 +589,7 @@ function Game() {
           // setTurn(0);
           // diceOn(allDice[0], allDice[turn]);
         }
-      },7000);
+      },diceNum * 500);
     }
   }
   //  console.log(currentPositions)
@@ -841,11 +843,13 @@ function Game() {
   //listening for space/enter click
   useEffect(() => {
     //TO-DO: fix dice roll while playing
+    diceComp.current.parentElement.parentElement.parentElement.style.pointerEvents = "all";
     const handleKeyDown = (e) => {
-      console.log(mapContainer.current.style.pointerEvents);
+      
       if (
         e.code === "Space" &&
-        mapContainer.current.style.pointerEvents === "none"
+        mapContainer.current.style.pointerEvents === "none" &&
+        diceComp.current.parentElement.parentElement.parentElement.style.pointerEvents === "all"
       ) {
         // diceComp.current.parentElement.click();
         diceComp.current.click();
