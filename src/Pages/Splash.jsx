@@ -1,7 +1,7 @@
 import React, { useContext } from "react";
 import bgImg from "../assets/Splash.png";
 import styles from "./Splash.module.css";
-import blueToken from "../assets/bLue-token.png";
+import blueToken from "../assets/blue-token.png";
 import greenToken from "../assets/green-token.png";
 import redToken from "../assets/red-token.png";
 import yellowToken from "../assets/yellow-token.png";
