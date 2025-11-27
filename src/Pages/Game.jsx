@@ -1,6 +1,6 @@
 import React, { useContext, useRef, useEffect, useState } from "react";
 import styles from "./Game.module.css";
-import blueToken from "../assets/bLue-token.png";
+import blueToken from "../assets/blue-token.png";
 import greenToken from "../assets/green-token.png";
 import redToken from "../assets/red-token.png";
 import yellowToken from "../assets/yellow-token.png";
