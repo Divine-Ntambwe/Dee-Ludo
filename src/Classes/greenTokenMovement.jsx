@@ -139,7 +139,7 @@ export class greenTokenObj {
     let x = 0;
     let token;
     let count = 0;
-    this.moveStatus = "won!"
+    this.moveStatus = "ok"
     switch (tokenNo) {
       case "1":
         token = this.token1;

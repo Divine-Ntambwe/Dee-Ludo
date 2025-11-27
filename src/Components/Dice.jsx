@@ -3,13 +3,13 @@ import './GradientText.css'
 import { TokensContext } from '../App';
 
 function Dice({setDiceNum}) {
-    const diceComp = useRef();
+    const {diceComp} = useContext(TokensContext);
     let btn = useRef();
     const rollBtn = btn.current
 
     const randomDice = () => {
     
-        const random = Math.floor(Math.random() * 2) +5;
+        const random = Math.floor(Math.random() * 10) ;
     
         if (random >= 1 && random <= 6) {
             rollDice(random);

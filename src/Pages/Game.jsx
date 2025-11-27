@@ -17,38 +17,45 @@ import map from "../assets/Map.png";
 import Galaxy from "../Components/Galaxy";
 import Particles from "../Components/Particles";
 import Dice from "../Components/Dice";
-import Dialog from "@mui/material/Dialog";
-import DialogActions from "@mui/material/DialogActions";
-import DialogContent from "@mui/material/DialogContent";
-import DialogContentText from "@mui/material/DialogContentText";
-import DialogTitle from "@mui/material/DialogTitle";
+import {
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Button,
+  Box,
+  Typography,
+} from "@mui/material";
+
+// If you're using Next.js or need global styles/CSS-in-JS
+import { styled } from "@mui/material/styles";
 
 function Game() {
   const [currentPositions, setCurrentPositions] = useState();
   const initialPositions = [
     {
-      token1: { x: 32, y: 75, block: 0 },
-      token2: { x: 32, y: 65, block: 0 },
-      token3: { x: 37, y: 75, block: 0 },
-      token4: { x: 37, y: 65, block: 0 },
+      token1: { x: 33.2, y: 75, block: 0 },
+      token2: { x: 33.2, y: 65, block: 0 },
+      token3: { x: 38.2, y: 75, block: 0 },
+      token4: { x: 38.2, y: 65, block: 0 },
     },
     {
-      token1: { x: 32, y: 10, block: 13 },
-      token2: { x: 32, y: 20, block: 13 },
-      token3: { x: 37, y: 10, block: 13 },
-      token4: { x: 37, y: 20, block: 13 },
+      token1: { x: 33.2, y: 10, block: 13 },
+      token2: { x: 33.2, y: 20, block: 13 },
+      token3: { x: 38.3, y: 10, block: 13 },
+      token4: { x: 38.3, y: 20, block: 13 },
     },
     {
-      token1: { x: 58, y: 10, block: 26 },
-      token2: { x: 58, y: 20, block: 26 },
-      token3: { x: 63, y: 10, block: 26 },
-      token4: { x: 63, y: 20, block: 26 },
+      token1: { x: 59.2, y: 10, block: 26 },
+      token2: { x: 59.2, y: 20, block: 26 },
+      token3: { x: 64.2, y: 10, block: 26 },
+      token4: { x: 64.2, y: 20, block: 26 },
     },
     {
-      token1: { x: 58, y: 75, block: 39 },
-      token2: { x: 58, y: 65, block: 39 },
-      token3: { x: 63, y: 75, block: 39 },
-      token4: { x: 63, y: 65, block: 39 },
+      token1: { x: 59.2, y: 75, block: 39 },
+      token2: { x: 59.2, y: 65, block: 39 },
+      token3: { x: 64.2, y: 75, block: 39 },
+      token4: { x: 64.2, y: 65, block: 39 },
     },
   ];
 
@@ -63,6 +70,7 @@ function Game() {
     setYellowPositions,
     numOfPlayers,
     setNumOfPlayers,
+    diceComp,
   } = useContext(TokensContext);
   let random = null;
   const [allBlueTokens, setAllBlueTokens] = useState();
@@ -98,9 +106,9 @@ function Game() {
     setAllYellowTokens(yellowTokens);
     setYellowPositions(yellowTokens.getPositions());
 
-    // setCurrentPositions([...initialPositions]);
+    mapContainer.current.style.pointerEvents = "none";
     blueDice.current.classList.add(styles.dice);
-    // dice.current.classList.add(styles.dice);
+
     blueOverlay.current.style.opacity = "0";
     redOverlay.current.style.opacity = "0";
     yellowOverlay.current.style.opacity = "0";
@@ -108,78 +116,85 @@ function Game() {
   }, []);
 
   function diceOn(nextDice, currentDice) {
-    console.log(turn);
     if (colorsWon.length) {
-      switch (allDice.indexOf(nextDice)) {
-        case 0: //for blue dice
-          if (colorsWon.includes("blue")) {
-            console.log("here")
-            diceOff(blueDice);
-            mapOff(allMapOverlay[0]);
-            let inc = numOfPlayers === 2 ? 2 : 1;
-            let minus = numOfPlayers >= 3 ? 1 : 0;
-            if (0 >= numOfPlayers - minus) {
-              setTurn(0);
-              nextDice = allDice[0];
-            } else {
-              setTurn(0 + inc);
-              nextDice = allDice[0 + inc];
+      let isPlaying = true;
+      while (isPlaying) {
+        isPlaying = false;
+        switch (allDice.indexOf(nextDice)) {
+          case 0: //for blue dice
+            if (colorsWon.includes("blue")) {
+              console.log("here");
+              diceOff(blueDice);
+              mapOff(allMapOverlay[0]);
+              let inc = numOfPlayers === 2 ? 2 : 1;
+              let minus = numOfPlayers >= 3 ? 1 : 0;
+              if (0 >= numOfPlayers - minus) {
+                setTurn(0);
+                nextDice = allDice[0];
+              } else {
+                setTurn(0 + inc);
+                nextDice = allDice[0 + inc];
+              }
             }
-          }
-          console.log(nextDice)
-          break;
+            console.log(nextDice);
+            break;
 
-          case 1://for red dice
-          if (colorsWon.includes("red")) {
-            console.log("here2")
-            diceOff(blueDice);
-            mapOff(allMapOverlay[0]);
-            let inc = numOfPlayers === 2 ? 2 : 1;
-            let minus = numOfPlayers >= 3 ? 1 : 0;
-            if (1 >= numOfPlayers - minus) {
-              setTurn(0);
-              nextDice = allDice[0];
-            } else {
-              setTurn(1 + inc);
-              nextDice = allDice[1 + inc];
+          case 1: //for red dice
+            if (colorsWon.includes("red")) {
+              console.log("here2");
+              diceOff(blueDice);
+              mapOff(allMapOverlay[0]);
+              let inc = numOfPlayers === 2 ? 2 : 1;
+              let minus = numOfPlayers >= 3 ? 1 : 0;
+              if (1 >= numOfPlayers - minus) {
+                setTurn(0);
+                nextDice = allDice[0];
+              } else {
+                setTurn(1 + inc);
+                nextDice = allDice[1 + inc];
+              }
             }
-          }
-          console.log(nextDice)
-          break;
+            console.log(nextDice);
+            break;
 
-          case 2://for green dice
-          if (colorsWon.includes("green")) {
-            console.log("here3")
-            diceOff(greenDice);
-            mapOff(allMapOverlay[0]);
-            let inc = numOfPlayers === 2 ? 2 : 1;
-            let minus = numOfPlayers >= 3 ? 1 : 0;
-            if (2 >= numOfPlayers - minus) {
-              setTurn(0);
-              nextDice = allDice[0];
-            } else {
-              setTurn(2 + inc);
-              nextDice = allDice[2 + inc];
+          case 2: //for green dice
+            if (colorsWon.includes("green")) {
+              console.log("here3");
+              diceOff(greenDice);
+              mapOff(allMapOverlay[0]);
+              let inc = numOfPlayers === 2 ? 2 : 1;
+              let minus = numOfPlayers >= 3 ? 1 : 0;
+              if (2 >= numOfPlayers - minus) {
+                setTurn(0);
+                nextDice = allDice[0];
+              } else {
+                setTurn(2 + inc);
+                nextDice = allDice[2 + inc];
+              }
             }
-          }
-          console.log(nextDice)
-          break;
+            console.log(nextDice);
+            break;
 
-          case 3://for yellow dice
-          if (colorsWon.includes("yellow")) {
-            console.log("here4")
-            diceOff(blueDice);
-            mapOff(allMapOverlay[0]);
-            let inc = numOfPlayers === 2 ? 2 : 1;
-            let minus = numOfPlayers >= 3 ? 1 : 0;
+          case 3: //for yellow dice
+            if (colorsWon.includes("yellow")) {
+              console.log("here4");
+              diceOff(blueDice);
+              mapOff(allMapOverlay[0]);
+              let inc = numOfPlayers === 2 ? 2 : 1;
+              let minus = numOfPlayers >= 3 ? 1 : 0;
               setTurn(0);
               nextDice = allDice[0];
-          }
-          console.log(nextDice)
-          break;
+            }
+            console.log(nextDice);
+            break;
+        }
+        console.log(nextDice);
+        if (colorsWon.includes(nextDice.id)) {
+          isPlaying = true;
+        }
       }
     }
-    console.log(nextDice)
+
     nextDice.style.pointerEvents = "all";
     nextDice.classList.add(styles.dice);
     currentDice && currentDice.classList.remove(styles.dice);
@@ -196,7 +211,7 @@ function Game() {
   function mapOff(mapSection, time = 0) {
     mapContainer.current.style.pointerEvents = "none";
     setTimeout(() => {
-      mapSection.classList.remove(styles.homeIndicator);
+      mapSection && mapSection.classList.remove(styles.homeIndicator);
     }, time);
   }
   const blueDice = useRef(),
@@ -224,7 +239,7 @@ function Game() {
 
   function autoPlay(tokenObj, color, moveFunction, diceNum) {
     if (tokenObj.getPlayingTokens().length === 1) {
-      console.log("first");
+      mapContainer.current.style.pointerEvents = "none";
       const moved = moveFunction({
         target: document.getElementById(
           `${color}token${tokenObj.getPlayingTokens()[0]}`
@@ -232,6 +247,8 @@ function Game() {
       });
       if (moved === "can't play") {
         return true;
+      } else {
+        return "moved";
       }
     }
 
@@ -326,6 +343,7 @@ function Game() {
     let canSkip;
     switch (turn) {
       case 0:
+        console.log(allBlueTokens);
         canSkip = autoPlay(allBlueTokens, "blue", handleMoveBlue, diceNum);
         break;
 
@@ -352,11 +370,14 @@ function Game() {
     });
 
     //if there are no eligable tokens should skip to next player
-    if (canSkip) {
+    if (canSkip === true) {
       hasTokensOut = false;
     }
 
-    console.log(hasTokensOut);
+    console.log(canSkip);
+    if (canSkip === "moved"){
+      return
+    }
     //allows user to play if they have tokens out
     if (hasTokensOut) {
       mapOn(allMapOverlay[turn]);
@@ -365,6 +386,7 @@ function Game() {
 
     //skips to the next one
     setTimeout(() => {
+      console.log("here")
       mapOff(allMapOverlay[turn]);
       let inc = numOfPlayers === 2 ? 2 : 1;
       let minus = numOfPlayers >= 3 ? 1 : 0;
@@ -432,12 +454,16 @@ function Game() {
           ...colorPositions,
           [tokenName]: initialPositions[num][tokenName],
         };
+        document.getElementById(`${player}`).style.margin = "0";
+        document.getElementById(player).transform = "scale(1)";
+
         setColorPositions(newPositions); //setting positions of tokensImgs
         tokensObj.setPositions([tokenName, initialPositions[num][tokenName]]); //setting positions of tokenClass
         console.log(tokensOut);
         tokensOut.splice(tokensOut.indexOf(`${color}${tokenName}`), 1);
         setTokensOut(tokensOut);
         console.log(tokensOut);
+        return true;
       } else if (block === currentBlock && player !== token) {
         n.push(document.getElementById(`${token}`));
         n.push(document.getElementById(`${player}`));
@@ -455,7 +481,7 @@ function Game() {
         });
       }
     });
-    return newPositions;
+    return false;
   }
 
   function handlePlayerWon(overLay) {
@@ -512,8 +538,8 @@ function Game() {
         return canMove;
       }
       setBluePositions(allBlueTokens.getPositions());
-      mapOff(allMapOverlay[turn], diceNum * 600);
 
+      mapOff(allMapOverlay[turn], diceNum * 600);
       setTimeout(() => {
         console.log(allBlueTokens.getMoveStatus());
         if (allBlueTokens.getMoveStatus() === "tokenIn") {
@@ -531,7 +557,7 @@ function Game() {
         let block =
           allBlueTokens.moveToken(e.target, num, diceNum, false)[1] + 1;
         setCurrentPositions({ ...currentPositions, [token]: block });
-        handleCollisionDetection(
+        const captured = handleCollisionDetection(
           token,
           block,
           { ...currentPositions, [token]: block },
@@ -540,7 +566,10 @@ function Game() {
 
         //plays again if player gets a 6
         console.log(allBlueTokens.getMoveStatus());
-        if (diceNum === 6 && allBlueTokens.getMoveStatus() !== "won!") {
+        if (
+          captured === true ||
+          (diceNum === 6 && allBlueTokens.getMoveStatus() !== "won!")
+        ) {
           diceOn(allDice[0]);
           return;
         }
@@ -550,12 +579,13 @@ function Game() {
           setTurn(0);
           diceOn(allDice[0], allDice[turn]);
         } else {
+          console.log("Relacccc")
           setTurn(turn + inc);
           diceOn(allDice[turn + inc], allDice[turn]);
           // setTurn(0);
           // diceOn(allDice[0], allDice[turn]);
         }
-      }, 700 * diceNum);
+      },7000);
     }
   }
   //  console.log(currentPositions)
@@ -604,18 +634,21 @@ function Game() {
         let block =
           allRedTokens.moveToken(e.target, num, diceNum, false)[1] + 1;
         setCurrentPositions({ ...currentPositions, [token]: block });
-        handleCollisionDetection(
+        const captured = handleCollisionDetection(
           token,
           block,
           { ...currentPositions, [token]: block },
           setRedPositions
         );
 
-        if (diceNum === 6 && allRedTokens.getMoveStatus() !== "won!") {
+        if (
+          captured === true ||
+          diceNum === 6 &&
+          allRedTokens.getMoveStatus() !== "won!" 
+        ) {
           diceOn(allDice[1]);
           return;
         }
-
 
         let inc = numOfPlayers === 2 ? 2 : 1;
         let minus = numOfPlayers >= 3 ? 1 : 0;
@@ -626,7 +659,7 @@ function Game() {
           setTurn(turn + inc);
           diceOn(allDice[turn + inc]);
         }
-      }, 700 * diceNum);
+      }, 500 * diceNum);
     }
   }
 
@@ -668,20 +701,24 @@ function Game() {
           setTokensOut(tokensOut);
         }
 
-        if (allRedTokens.getMoveStatus() === "won!") {
-          setColorsWon([...colorsWon, "red"]);
-          handlePlayerWon(redOverlay.current);
+        if (allGreenTokens.getMoveStatus() === "won!") {
+          setColorsWon([...colorsWon, "green"]);
+          handlePlayerWon(greenOverlay.current);
         }
         let block =
           allGreenTokens.moveToken(e.target, num, diceNum, false)[1] + 1;
         setCurrentPositions({ ...currentPositions, [token]: block });
-        handleCollisionDetection(
+        const captured = handleCollisionDetection(
           token,
           block,
           { ...currentPositions, [token]: block },
           setGreenPositions
         );
-        if (diceNum === 6 && allGreenTokens.getMoveStatus() !== "won!") {
+        if (
+          captured === true ||
+          diceNum === 6 &&
+          allGreenTokens.getMoveStatus() !== "won!" 
+        ) {
           diceOn(allDice[2]);
           return;
         }
@@ -694,7 +731,7 @@ function Game() {
           setTurn(turn + inc);
           diceOn(allDice[turn + inc]);
         }
-      }, 700 * diceNum);
+      }, 500 * diceNum);
     }
   }
 
@@ -715,7 +752,7 @@ function Game() {
       handleCollisionDetection(token, 39, { ...currentPositions, [token]: 39 });
       setTimeout(() => {
         mapOff(allMapOverlay[turn]);
-        diceOn();
+        diceOn(allDice[3]);
       }, 600);
       return;
     } else if (allYellowTokens.getPlayingTokens().includes(num)) {
@@ -742,16 +779,21 @@ function Game() {
         }
 
         let block =
-        allYellowTokens.moveToken(e.target, num, diceNum, false)[1] + 1;
+          allYellowTokens.moveToken(e.target, num, diceNum, false)[1] + 1;
         setCurrentPositions({ ...currentPositions, [token]: block });
-        handleCollisionDetection(
+        const captured = handleCollisionDetection(
           token,
           block,
           { ...currentPositions, [token]: block },
           setYellowPositions
         );
 
-        if (diceNum === 6 && allYellowTokens.getMoveStatus() === "won!") {
+        console.log(allYellowTokens.getMoveStatus());
+        if (
+          captured === true ||
+          diceNum === 6 &&
+          allYellowTokens.getMoveStatus() !== "won!" 
+        ) {
           diceOn(allDice[3]);
           return;
         }
@@ -764,7 +806,7 @@ function Game() {
           setTurn(turn + inc);
           diceOn(allDice[turn + inc]);
         }
-      }, 700 * diceNum);
+      }, 500 * diceNum);
     }
   }
 
@@ -775,9 +817,317 @@ function Game() {
   const handleClose = () => {
     setOpen(false);
   };
+  const handlePlayAgain = () => {};
+  const winnerToken = blueToken;
+  // winningPlayer === 1
+  //   ? blueToken
+  //   : winningPlayer === 2
+  //   ? redToken
+  //   : winningPlayer === 3
+  //   ? greenToken
+  //   : yellowToken;
+
+  const winnerColor = "blue";
+  // winningPlayer === 1
+  //   ? "#00d0ff"
+  //   : winningPlayer === 2
+  //   ? "#ff2e63"
+  //   : winningPlayer === 3
+  //   ? "#39ff14"
+  //   : "#ffd700";
+
+  //listening for space/enter click
+  useEffect(() => {
+    //TO-DO: fix dice roll while playing
+    const handleKeyDown = (e) => {
+      console.log(mapContainer.current.style.pointerEvents);
+      if (
+        e.code === "Space" &&
+        mapContainer.current.style.pointerEvents === "none"
+      ) {
+        // diceComp.current.parentElement.click();
+        diceComp.current.click();
+        window.removeEventListener("keydown", handleKeyDown);
+        setTimeout(() => {
+          window.addEventListener("keydown", handleKeyDown);
+        }, 3000);
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, []);
 
   return (
     <>
+      <Dialog
+        open={false}
+        // onClose={onClose}
+        PaperProps={{
+          sx: {
+            background: "transparent",
+            boxShadow: "none",
+            overflow: "hidden",
+            borderRadius: "24px",
+            maxWidth: 460,
+          },
+        }}
+      >
+        {/* Animated Nebula Background */}
+        <Box
+          sx={{
+            position: "absolute",
+            inset: 0,
+            background:
+              "radial-gradient(circle at 30% 70%, #120038 0%, #000000 70%)",
+            backgroundSize: "200% 200%",
+            animation: "nebula 20s ease infinite",
+            zIndex: -2,
+          }}
+        />
+        <Box
+          sx={{
+            position: "absolute",
+            inset: 0,
+            background:
+              "url('data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22100%22 height=%22100%22><defs><radialGradient id=%22star%22><stop offset=%220%25%22 stop-color=%22%23ffffff%22/><stop offset=%22100%25%22 stop-color=%22%23a0a0ff%22 stop-opacity=%220%22/></radialGradient></defs><circle cx=%2250%22 cy=%2250%22 r=%221%22 fill=%22url(%23star)%22 opacity=%220.8%22/><circle cx=%2220%22 cy=%2280%22 r=%221.5%22 fill=%22url(%23star)%22 opacity=%220.6%22/><circle cx=%2280%22 cy=%2230%22 r=%221%22 fill=%22url(%23star)%22 opacity=%220.7%22/></svg>')",
+            backgroundSize: "80px 80px",
+            opacity: 0.4,
+            zIndex: -1,
+          }}
+        />
+
+        {/* Main Content */}
+        <DialogContent
+          sx={{
+            background: "rgba(10, 0, 40, 0.7)",
+            backdropFilter: "blur(12px)",
+            border: "2px solid rgba(138, 43, 226, 0.5)",
+            borderRadius: "24px",
+            textAlign: "center",
+            py: 6,
+            px: 4,
+          }}
+        >
+          {/* Cosmic Title */}
+          <Typography
+            variant="h3"
+            sx={{
+              background: "linear-gradient(90deg, #00ffff, #ff00ff, #ffff00)",
+              backgroundSize: "200%",
+              WebkitBackgroundClip: "text",
+              WebkitTextFillColor: "transparent",
+              fontWeight: "bold",
+              fontFamily: "'Orbitron', 'Rajdhani', sans-serif",
+              letterSpacing: "4px",
+              mb: 2,
+              animation: "rainbow 8s linear infinite",
+            }}
+          >
+            VICTORY IN THE VOID
+          </Typography>
+
+          <Typography
+            variant="h5"
+            sx={{
+              color: "#e0e0ff",
+              mb: 4,
+              fontFamily: "'Exo 2', sans-serif",
+              textShadow: "0 0 20px #ffffff",
+            }}
+          >
+            The stars have aligned...
+          </Typography>
+
+          {/* Winner Token with Halo & Orbit Effect */}
+          <Box
+            sx={{
+              position: "relative",
+              display: "inline-block",
+              my: 3,
+            }}
+          >
+            <Box
+              sx={{
+                position: "absolute",
+                inset: -20,
+                border: "3px solid",
+                borderColor: winnerColor,
+                borderRadius: "50%",
+                opacity: 0.6,
+                animation: "orbit 6s linear infinite",
+              }}
+            />
+            <Box
+              sx={{
+                position: "absolute",
+                inset: -35,
+                border: "1px dashed",
+                borderColor: winnerColor,
+                borderRadius: "50%",
+                opacity: 0.4,
+                animation: "orbit 10s linear infinite reverse",
+              }}
+            />
+            <img
+              src={winnerToken}
+              alt="Winner Token"
+              style={{
+                width: 120,
+                height: 120,
+                borderRadius: "50%",
+                border: `8px solid ${winnerColor}`,
+                boxShadow: `0 0 60px ${winnerColor}, inset 0 0 30px ${winnerColor}`,
+                animation: "float 4s ease-in-out infinite",
+              }}
+            />
+          </Box>
+
+          <Typography
+            variant="h4"
+            sx={{
+              color: winnerColor,
+              fontWeight: "bold",
+              mt: 3,
+              mb: 1,
+              fontFamily: "'Orbitron', sans-serif",
+              textShadow: `0 0 30px ${winnerColor}`,
+            }}
+          >
+            PLAYER {colorsWon[0]} DOMINATES THE GALAXY
+          </Typography>
+
+          <Typography
+            variant="body1"
+            sx={{
+              color: "#bbbbff",
+              fontStyle: "italic",
+              mb: 4,
+            }}
+          >
+            All tokens have returned to their home star system.
+          </Typography>
+
+          {/* Pulsing Victory Badge */}
+          <Box
+            sx={{
+              display: "inline-block",
+              px: 4,
+              py: 2,
+              background: "rgba(138, 43, 226, 0.3)",
+              border: "2px solid #8a2be2",
+              borderRadius: "50px",
+              animation: "pulse 3s infinite",
+            }}
+          >
+            <Typography
+              variant="h6"
+              sx={{ color: "#ffffff", fontWeight: "bold" }}
+            >
+              SUPREME COMMANDER
+            </Typography>
+          </Box>
+        </DialogContent>
+
+        <DialogActions
+          sx={{
+            justifyContent: "center",
+            background: "rgba(0, 0, 50, 0.6)",
+            py: 3,
+            gap: 3,
+            borderTop: "1px solid rgba(138, 43, 226, 0.3)",
+          }}
+        >
+          <Button
+            // onClick={onPlayAgain}
+            variant="contained"
+            size="large"
+            sx={{
+              background: "linear-gradient(45deg, #00ffff, #ff00ff)",
+              color: "#000",
+              fontWeight: "bold",
+              px: 5,
+              py: 1.5,
+              borderRadius: "50px",
+              fontFamily: "'Rajdhani', sans-serif",
+              fontSize: "1.1rem",
+              boxShadow: "0 0 30px rgba(0, 255, 255, 0.6)",
+              "&:hover": {
+                transform: "translateY(-4px)",
+                boxShadow: "0 0 50px rgba(0, 255, 255, 0.9)",
+              },
+            }}
+          >
+            NEW MISSION
+          </Button>
+
+          <Button
+            // onClick={onClose}
+            variant="outlined"
+            size="large"
+            sx={{
+              color: "#00ffff",
+              borderColor: "#00ffff",
+              px: 4,
+              py: 1.5,
+              borderRadius: "50px",
+              fontWeight: "bold",
+              "&:hover": {
+                background: "rgba(0, 255, 255, 0.1)",
+                borderColor: "#00ffff",
+              },
+            }}
+          >
+            RETURN TO BASE
+          </Button>
+        </DialogActions>
+
+        {/* CSS Animations */}
+        <style jsx>{`
+          @keyframes nebula {
+            0%,
+            100% {
+              background-position: 0% 50%;
+            }
+            50% {
+              background-position: 100% 50%;
+            }
+          }
+          @keyframes rainbow {
+            0% {
+              background-position: 0%;
+            }
+            100% {
+              background-position: 200%;
+            }
+          }
+          @keyframes float {
+            0%,
+            100% {
+              transform: translateY(0);
+            }
+            50% {
+              transform: translateY(-20px);
+            }
+          }
+          @keyframes orbit {
+            from {
+              transform: rotate(0deg);
+            }
+            to {
+              transform: rotate(360deg);
+            }
+          }
+          @keyframes pulse {
+            0%,
+            100% {
+              box-shadow: 0 0 20px #8a2be2;
+            }
+            50% {
+              box-shadow: 0 0 40px #ff00ff;
+            }
+          }
+        `}</style>
+      </Dialog>
       <div className={styles.homeIndicatorCont}>
         <div className={styles.mapOverlay}>
           <div ref={redOverlay}>
@@ -871,6 +1221,7 @@ function Game() {
             {turn === 0 && (
               <div
                 onClick={() => {
+                  console.log("clicked!");
                   blueDice.current.classList.remove(styles.dice);
                   diceOff(blueDice);
                   setTimeout(() => {
@@ -878,7 +1229,7 @@ function Game() {
                   }, 3000);
                 }}
               >
-                <Dice setDiceNum={setDiceNum} />
+                <Dice id="h" setDiceNum={setDiceNum} />
               </div>
             )}
           </div>

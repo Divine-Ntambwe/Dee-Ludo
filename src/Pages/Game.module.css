@@ -39,7 +39,7 @@ text-align: center;
     display: flex;
     justify-content: center;
     align-items: center;
-    /* pointer-events: none; */
+    pointer-events: none;
 }
 .map{
     /* flex:0.5; */
