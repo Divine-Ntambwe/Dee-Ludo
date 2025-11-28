@@ -214,7 +214,7 @@ export class greenTokenObj {
       }
       this.setGreenPositions(this.getPositions());
     
-      setTimeout(step, 100);
+      setTimeout(step, 500);
     };
     setTimeout(() => {
       tokenObj.classList.remove(this.styles.bounce);

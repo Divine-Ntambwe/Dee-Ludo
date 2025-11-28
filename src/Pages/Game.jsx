@@ -649,7 +649,7 @@ function Game() {
           // setTurn(0);
           // diceOn(allDice[0], allDice[turn]);
         }
-      },diceNum * 100);
+      },diceNum * 500);
       //CHANGE THIS ^
     }
     return "moved"
@@ -798,7 +798,7 @@ function Game() {
           setTurn(turn + inc);
           diceOn(allDice[turn + inc]);
         }
-      }, 100 * diceNum);
+      }, 500 * diceNum);
       //CHANGE THIS ^
     }
     return "moved"
