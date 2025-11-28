@@ -33,7 +33,7 @@ import {
 import { styled } from "@mui/material/styles";
 
 function Game() {
-  const [currentPositions, setCurrentPositions] = useState();
+  const [currentPositions, setCurrentPositions] = useState({});
   const initialPositions = [
     {
       token1: { x: 33.2, y: 75, block: 0 },
@@ -85,7 +85,7 @@ function Game() {
   const [turn, setTurn] = useState(0);
   const mapContainer = useRef();
   const diceContainer = useRef();
-  const [tokensOut, setTokensOut] = useState([]);
+  const [tokensOut, setTokensOut] = useState(["bluetoken1"]);
   const playerColors = ["blue", "red", "green", "yellow"];
   const colors = ["#07b1ea", "#b51616", "#057f05", "#f1f116"];
   const [colorsWon, setColorsWon] = useState([]);
@@ -131,6 +131,7 @@ function Game() {
     setYellowPositions(yellowTokens.getPositions());
 
     mapContainer.current.style.pointerEvents = "none";
+    setCurrentPositions({})
     
     blueDice.current.classList.add(styles.dice);
 
@@ -242,7 +243,8 @@ function Game() {
   
 
   function autoPlay(tokenObj, color, moveFunction, diceNum) {
-    if (tokenObj.getPlayingTokens().length === 1) {
+    if (tokenObj.getPlayingTokens().length === 1 && diceNum !== 6) {
+      console.log("one")
       mapContainer.current.style.pointerEvents = "none";
       const moved = moveFunction({
         target: document.getElementById(
@@ -257,8 +259,8 @@ function Game() {
     }
 
     if (tokenObj.getTokensInStrip().length) {
-      const tokensCanMove = []; //number of token
-      const tokensCantMove = [];
+      const tokensCanMove = []; //number of tokens that can move with in home strip
+      const tokensCantMove = []; //number of tokens that can't move with in home strip
 
       tokenObj.getTokensInStrip().map((i) => {
         //separating tokens in home strip that can and can't move according to dice number
@@ -281,15 +283,25 @@ function Game() {
           "not-allowed";
       });
 
+      
       if (tokensCantMove.length === tokenObj.getPlayingTokens().length) {
-        //skipping if there are no playing tokens
-        console.log("second");
-        return true;
+        //checking if player can take one out
+        console.log("add",(tokenObj.getPlayingTokens().length + tokenObj.getTokensWon()))
+        console.log(diceNum)
+
+        if (diceNum === 6 && (tokenObj.getPlayingTokens().length + tokenObj.getTokensWon()) !== 4){
+          
+        } else {
+          //skipping if there are no playing tokens
+          console.log("second");
+          return true;
+        }
       }
 
-      if (
+
+      if ( //there's only one that can be moved within the strip
         tokenObj.getPlayingTokens().length - tokensCantMove.length === 1 &&
-        tokensCanMove.length
+        tokensCanMove.length === 1
       ) {
         //playing auto play if there's only one player than move and is in the strip
         console.log("third");
@@ -300,10 +312,12 @@ function Game() {
 
       if (
         tokenObj.getPlayingTokens().length - tokensCantMove.length === 1 &&
-        !tokensCanMove.length
+        tokensCanMove.length === 0
+        && diceNum === 6 
+        && (tokenObj.getPlayingTokens().length + tokenObj.getTokensWon()) !== 4
       ) {
         // TO-DO: playing auto play if there's only one player than move and is NOT in the strip
-
+        console.log("fourth")
         tokenObj.getPlayingTokens().map((i) => {
           if (!tokensCantMove.includes(i)) {
             moveFunction({
@@ -313,7 +327,7 @@ function Game() {
         });
       }
     }
-    return false;
+    return true;
   }
 
   function handleDiceRoll(won) {
@@ -339,27 +353,29 @@ function Game() {
     // const diceNums = ["one", "two", "three", "four", "five", "six"];
 
     //allows user to play if they get a six
-    if (diceNum === 6) {
-      mapOn(allMapOverlay[turn]);
-      return;
-    }
+   
 
     let canSkip;
+    let tokens;
     switch (turn) {
       case 0:
         console.log(allBlueTokens);
         canSkip = autoPlay(allBlueTokens, "blue", handleMoveBlue, diceNum);
+        tokens = allBlueTokens
         break;
 
       case 1:
+        tokens = allRedTokens
         canSkip = autoPlay(allRedTokens, "red", handleMoveRed, diceNum);
         break;
 
       case 2:
+        tokens = allGreenTokens
         canSkip = autoPlay(allGreenTokens, "green", handleMoveGreen, diceNum);
         break;
 
       case 3:
+        tokens = allYellowTokens
         canSkip = autoPlay(
           allYellowTokens,
           "yellow",
@@ -367,6 +383,14 @@ function Game() {
           diceNum
         );
         break;
+    }
+
+     //CHANGE THIS 
+     // moved this here
+    if (diceNum === 6 && (tokens.getPlayingTokens().length + tokens.getTokensWon()) !== 4) { //allows to takeout
+      console.log("heyyyaaa")
+      mapOn(allMapOverlay[turn]);
+      return;
     }
 
     let hasTokensOut = tokensOut.find((i) => {
@@ -379,11 +403,11 @@ function Game() {
     }
 
     console.log(canSkip);
-    if (canSkip === "moved"){
-      return
-    }
+
+    
     //allows user to play if they have tokens out
-    if (hasTokensOut) {
+    if (hasTokensOut || canSkip === "moved") {
+      console.log("hehe")
       mapOn(allMapOverlay[turn]);
       return;
     }
@@ -405,88 +429,123 @@ function Game() {
   }
 
   function handleCollisionDetection(token, currentBlock, playerBlocks) {
-    let newPositions = null;
-    let safeBlocks = [1, 9, 14, 22, 27, 35, 40, 48];
-    let startBlocks = [0, 13, 26, 39];
-    let n = [];
-    Object.entries(playerBlocks).map(([player, block]) => {
-      // console.log(block,currentBlock)
-      // console.log(player,token)
-      if (
-        block === currentBlock &&
-        player !== token &&
-        player.slice(0, player.length - 1) !==
-          token.slice(0, token.length - 1) &&
-        !safeBlocks.includes(block)
-      ) {
-        let color = player.slice(0, player.indexOf("token"));
-        let setColorPositions; //changing position on captured color
-        let colorPositions; //positions of captured color
-        let tokensObj; //object of captured color
-        let num; //position of color position in initial positions array
-        switch (color) {
-          case "blue":
-            colorPositions = bluePositions;
-            setColorPositions = setBluePositions;
-            tokensObj = allBlueTokens;
-            num = 0;
-            break;
+    let tokensToStack = []; // Collect tokens that share the same block (for stacking)
+  let wasCapture = false;
 
-          case "red":
-            colorPositions = redPositions;
-            setColorPositions = setRedPositions;
-            tokensObj = allRedTokens;
-            num = 1;
-            break;
+  const safeBlocks = [1, 9, 14, 22, 27, 35, 40, 48];
+  const startBlocks = {blue:0,red: 13,green: 26,yellow: 39};
+  console.log(playerBlocks)
 
-          case "green":
-            colorPositions = greenPositions;
-            setColorPositions = setGreenPositions;
-            tokensObj = allGreenTokens;
-            num = 2;
-            break;
 
-          case "yellow":
-            colorPositions = yellowPositions;
-            setColorPositions = setYellowPositions;
-            tokensObj = allYellowTokens;
-            num = 3;
-            break;
-        }
-        let tokenName = player.slice(player.indexOf("token"), player.length); //e.g token1
-        newPositions = {
-          ...colorPositions,
-          [tokenName]: initialPositions[num][tokenName],
-        };
-        document.getElementById(`${player}`).style.margin = "0";
-        document.getElementById(player).transform = "scale(1)";
+  Object.entries(playerBlocks).forEach(([playerId, block]) => {
+    console.log(block,currentBlock)
+    const isSameBlock = block === currentBlock;
+    const isSameToken = playerId === token;
+    const isSameColor = playerId.startsWith(token.slice(0, token.indexOf("token")));
+    //player is token to be eaten
 
-        setColorPositions(newPositions); //setting positions of tokensImgs
-        tokensObj.setPositions([tokenName, initialPositions[num][tokenName]]); //setting positions of tokenClass
-        console.log(tokensOut);
-        tokensOut.splice(tokensOut.indexOf(`${color}${tokenName}`), 1);
-        setTokensOut(tokensOut);
-        console.log(tokensOut);
-        return true;
-      } else if (block === currentBlock && player !== token) {
-        n.push(document.getElementById(`${token}`));
-        n.push(document.getElementById(`${player}`));
-      } else if (
-        [0, 13, 26, 39].includes(block) ||
-        [0, 13, 26, 39].includes(currentBlock)
-      ) {
+    // Case 1: Capture opponent token (not safe block, different color)
+    if (
+      isSameBlock &&
+      !isSameToken &&
+      !isSameColor &&
+      !safeBlocks.includes(block)
+    ) {
+      
+      
+
+      const color = playerId.slice(0, playerId.indexOf("token")); // "blue", "red", etc.
+      const tokenName = playerId.slice(playerId.indexOf("token")); // "token1", "token2", etc.
+
+      let colorPositions, setColorPositions, tokensObj, homeIndex;
+      console.log(startBlocks[token.slice(0, token.indexOf("token"))])
+      switch (color) {
+        case "blue":
+          if (block === 0 || startBlocks[token.slice(0, token.indexOf("token"))] === block) return
+          colorPositions = bluePositions;
+          setColorPositions = setBluePositions;
+          tokensObj = allBlueTokens;
+          homeIndex = 0;
+          break;
+        case "red":
+          if (block === 13 || startBlocks[token.slice(0, token.indexOf("token"))] === block) return
+          colorPositions = redPositions;
+          setColorPositions = setRedPositions;
+          tokensObj = allRedTokens;
+          homeIndex = 1;
+          break;
+        case "green":
+          if (block === 26 || startBlocks[token.slice(0, token.indexOf("token"))] === block) return
+          colorPositions = greenPositions;
+          setColorPositions = setGreenPositions;
+          tokensObj = allGreenTokens;
+          homeIndex = 2;
+          break;
+        case "yellow":
+          if (block === 39 || startBlocks[token.slice(0, token.indexOf("token"))] === block) return
+          colorPositions = yellowPositions;
+          setColorPositions = setYellowPositions;
+          tokensObj = allYellowTokens;
+          homeIndex = 3;
+          break;
+        default:
+          return;
       }
-      if (n.length > 0) {
-        const tokensOnBlock = [...new Set(n)];
+      wasCapture = true;
+
+      // Reset captured token to home
+      const newPositions = {
+        ...colorPositions,
+        [tokenName]: initialPositions[homeIndex][tokenName],
+      };
+
+      // Update state
+      setColorPositions(newPositions);
+      tokensObj.setPositions([tokenName, initialPositions[homeIndex][tokenName]]);
+
+      // Remove from board (tokensOut)
+      const tokenKey = `${color}${tokenName}`; // e.g., "bluetoken1"
+      setTokensOut(prev => prev.filter(t => t !== tokenKey));
+
+      // Reset visual styling
+      const tokenElement = document.getElementById(playerId);
+      if (tokenElement) {
+        tokenElement.style.margin = "0";
+        tokenElement.style.transform = "scale(1)";
+      }
+    }
+    // Case 2: Multiple tokens on same block (including own or opponent on safe/start)
+    else if (isSameBlock && !isSameToken) {
+      const element = document.getElementById(token);        // current moving token
+      const otherElement = document.getElementById(playerId); // other token on same block
+      if (element) tokensToStack.push(element);
+      if (otherElement) tokensToStack.push(otherElement);
+    }
+  });
+
+  // Apply stacking effect only once after loop
+  if (tokensToStack.length > 0) {
+        const tokensOnBlock = [...new Set(tokensToStack)];
         tokensOnBlock.map((token, i) => {
-          token.style.transform = `scale(${0.8 - 0.01 * n.length}) translateX(${
-            -5 * n.length + i * 10
+          token.style.transform = `scale(${0.8 - 0.01 * tokensToStack.length}) translateX(${
+            -5 * tokensToStack.length + i * 10
           }px)`;
         });
       }
-    });
-    return false;
-  }
+  // if (tokensToStack.length > 1) {
+  //   const uniqueTokens = [...new Set(tokensToStack)]; // remove duplicates if any
+  //   uniqueTokens.forEach((tokenEl, index) => {
+  //     if (tokenEl) {
+  //       const scale = 0.8 - 0.01 * uniqueTokens.length;
+  //       const offsetX = -5 * uniqueTokens.length + index * 10;
+  //       tokenEl.style.transform = `scale(${scale}) translateX(${offsetX}px)`;
+  //       tokenEl.style.transition = "transform 0.3s ease";
+  //     }
+  //   });
+  // }
+
+  return wasCapture;
+};
 
   function handlePlayerWon(overLay) {
     overLay.style.opacity = "1";
@@ -519,15 +578,15 @@ function Game() {
     e.target.style.margin = "0";
     e.target.style.transform = "scale(1)";
     let num = token.slice(token.indexOf(`/\d/`), token.length);
-    //REMOVE +1
+    //TO:CHANGE ADD +6
 
     if (!allBlueTokens.getPlayingTokens().includes(num) && diceNum === 6) {
       //takes one blue token out
       setBluePositions(allBlueTokens.takeOut(num));
       // dice.current.classList.add(styles.dice);
       setTokensOut([...tokensOut, token]);
-      setCurrentPositions({ ...currentPositions, [token]: 1 });
-      handleCollisionDetection(token, 1, { ...currentPositions, [token]: 1 });
+      setCurrentPositions({ ...currentPositions, [token]: 0 });
+      handleCollisionDetection(token, 0, { ...currentPositions, [token]: 0 });
 
       setTimeout(() => {
         mapOff(allMapOverlay[turn]);
@@ -543,7 +602,7 @@ function Game() {
       }
       setBluePositions(allBlueTokens.getPositions());
 
-      mapOff(allMapOverlay[turn], diceNum * 600);
+      mapOff(allMapOverlay[turn], diceNum * 500);
       setTimeout(() => {
         console.log(allBlueTokens.getMoveStatus());
         if (allBlueTokens.getMoveStatus() === "tokenIn") {
@@ -586,11 +645,14 @@ function Game() {
           console.log("Relacccc")
           setTurn(turn + inc);
           diceOn(allDice[turn + inc], allDice[turn]);
+          
           // setTurn(0);
           // diceOn(allDice[0], allDice[turn]);
         }
-      },diceNum * 500);
+      },diceNum * 100);
+      //CHANGE THIS ^
     }
+    return "moved"
   }
   //  console.log(currentPositions)
 
@@ -665,6 +727,7 @@ function Game() {
         }
       }, 500 * diceNum);
     }
+     return "moved"
   }
 
   function handleMoveGreen(e) {
@@ -735,8 +798,10 @@ function Game() {
           setTurn(turn + inc);
           diceOn(allDice[turn + inc]);
         }
-      }, 500 * diceNum);
+      }, 100 * diceNum);
+      //CHANGE THIS ^
     }
+    return "moved"
   }
 
   function handleMoveYellow(e) {
@@ -812,6 +877,7 @@ function Game() {
         }
       }, 500 * diceNum);
     }
+     return "moved"
   }
 
   const handleClickOpen = () => {

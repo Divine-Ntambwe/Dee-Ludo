@@ -38,6 +38,10 @@ export class redTokenObj {
     return [...new Set(this.tokensInStrip)]
   }
 
+  getTokensWon(){
+    return this.tokensWon
+  }
+
   takeOut(num) {
     switch (num) {
       case "1":

@@ -40,7 +40,10 @@ export class blueTokenObj {
   getTokensInStrip(){
     return [...new Set(this.tokensInStrip)]
   }
-
+  getTokensWon(){
+    return this.tokensWon
+  }
+  
   takeOut(num) {
     switch (num) {
       case "1":
@@ -124,6 +127,7 @@ export class blueTokenObj {
       x = -moveXBy;
     } else if (token.block >= 51 && token.block < 57) {
       this.tokensInStrip.push(num)
+      console.log(this.getTokensInStrip())
       x = 0;
       y = -moveYBy;
     }
@@ -196,7 +200,7 @@ export class blueTokenObj {
 
       
 
-      if (count > dice) return
+      if (count > dice) return "moved"
       let pos = { ...token, x: (token.x += x), y: (token.y += y) };
       switch (tokenNo) {
         case "1":

@@ -135,6 +135,9 @@ export class yellowTokenObj {
   getMoveStatus(){
     return this.moveStatus
   }
+  getTokensWon(){
+    return this.tokensWon
+  }
   
 
   moveToken(tokenObj, tokenNo, dice,move=true) {

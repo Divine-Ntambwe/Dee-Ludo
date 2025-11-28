@@ -9,8 +9,8 @@ function Dice({setDiceNum}) {
 
     const randomDice = () => {
     
-        const random = Math.floor(Math.random() * 10) ;
-    
+        const random =  Math.floor(Math.random() * 10);
+        
         if (random >= 1 && random <= 6)  {
             rollDice(random);
             setDiceNum(random)
@@ -34,7 +34,7 @@ const rollDice = random => {
             case 1:
                 dice.style.transform = 'rotateX(0deg) rotateY(0deg)';
                 break;
-
+//CHANGE THIS
             case 6:
                 dice.style.transform = 'rotateX(180deg) rotateY(0deg)';
                 break;

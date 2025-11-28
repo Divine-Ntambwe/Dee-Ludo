@@ -38,6 +38,10 @@ export class greenTokenObj {
     return [...new Set(this.tokensInStrip)]
   }
 
+  getTokensWon(){
+    return this.tokensWon
+  }
+
   takeOut(num) {
     switch (num) {
       case "1":
@@ -78,7 +82,7 @@ export class greenTokenObj {
         y = -turnY;
         x = turnX;
       }
-    } else if (token.block >= 24 && token.block < 26) {
+    } else if (token.block >= 24 && token.block < 25) {
       y = 0;
       x = moveXBy;
     } else if (token.block >= 26 && token.block < 31) {
@@ -172,7 +176,7 @@ export class greenTokenObj {
       token.block += 1;
       
       [x, y] = this.tokenMoves(token, 0, 0, tokenNo);
-       if (token.block === 57) {
+       if (token.block === 58) {
         //if token gets home stops it from moving
         y = 0;
         x = 0;
@@ -189,8 +193,8 @@ export class greenTokenObj {
       
       console.log(token.block)
       if (count > dice) return;
-      if (token.block === 51) token.block = -1;
-      if (token.block === 24) token.block = 51;
+      if (token.block === 51) {token.block = -1; console.log("turned")}
+      if (token.block === 25) {token.block = 51;}
       let pos = { x: (token.x += x), y: (token.y += y),block:token.block };
       switch (tokenNo) {
         case "1":
@@ -210,7 +214,7 @@ export class greenTokenObj {
       }
       this.setGreenPositions(this.getPositions());
     
-      setTimeout(step, 500);
+      setTimeout(step, 100);
     };
     setTimeout(() => {
       tokenObj.classList.remove(this.styles.bounce);
