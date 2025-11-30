@@ -75,17 +75,17 @@ function Game() {
     diceComp,
   } = useContext(TokensContext);
   let random = null;
-  const [allBlueTokens, setAllBlueTokens] = useState();
-  const [allRedTokens, setAllRedTokens] = useState();
-  const [allGreenTokens, setAllGreenTokens] = useState();
-  const [allYellowTokens, setAllYellowTokens] = useState();
+  const [allBlueTokens, setAllBlueTokens] = useState({});
+  const [allRedTokens, setAllRedTokens] = useState({});
+  const [allGreenTokens, setAllGreenTokens] = useState({});
+  const [allYellowTokens, setAllYellowTokens] = useState({});
   const [diceName, setDiceName] = useState("one"); //
   const [diceNum, setDiceNum] = useState(null);
   const dice = useRef();
   const [turn, setTurn] = useState(0);
   const mapContainer = useRef();
   const diceContainer = useRef();
-  const [tokensOut, setTokensOut] = useState(["greentoken1"]);
+  const [tokensOut, setTokensOut] = useState([]);
   const playerColors = ["blue", "red", "green", "yellow"];
   const colors = ["#07b1ea", "#b51616", "#057f05", "#f1f116"];
   const [colorsWon, setColorsWon] = useState([]);
