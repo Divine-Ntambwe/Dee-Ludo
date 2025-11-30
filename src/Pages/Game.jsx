@@ -85,7 +85,7 @@ function Game() {
   const [turn, setTurn] = useState(0);
   const mapContainer = useRef();
   const diceContainer = useRef();
-  const [tokensOut, setTokensOut] = useState(["bluetoken1"]);
+  const [tokensOut, setTokensOut] = useState(["greentoken1"]);
   const playerColors = ["blue", "red", "green", "yellow"];
   const colors = ["#07b1ea", "#b51616", "#057f05", "#f1f116"];
   const [colorsWon, setColorsWon] = useState([]);
@@ -130,9 +130,7 @@ function Game() {
     setAllYellowTokens(yellowTokens);
     setYellowPositions(yellowTokens.getPositions());
 
-    mapContainer.current.style.pointerEvents = "none";
-    setCurrentPositions({})
-    
+    mapContainer.current.style.pointerEvents = "none";  
     blueDice.current.classList.add(styles.dice);
 
     blueOverlay.current.style.opacity = "0";
@@ -243,6 +241,7 @@ function Game() {
   
 
   function autoPlay(tokenObj, color, moveFunction, diceNum) {
+
     if (tokenObj.getPlayingTokens().length === 1 && diceNum !== 6) {
       console.log("one")
       mapContainer.current.style.pointerEvents = "none";
@@ -251,6 +250,7 @@ function Game() {
           `${color}token${tokenObj.getPlayingTokens()[0]}`
         ),
       });
+      console.log(moved)
       if (moved === "can't play") {
         return true;
       } else {
@@ -310,24 +310,23 @@ function Game() {
         });
       }
 
-      if (
+      if (//redo
         tokenObj.getPlayingTokens().length - tokensCantMove.length === 1 &&
         tokensCanMove.length === 0
-        && diceNum === 6 
-        && (tokenObj.getPlayingTokens().length + tokenObj.getTokensWon()) !== 4
       ) {
+        if (diceNum === 6 && (tokenObj.getPlayingTokens().length + tokenObj.getTokensWon()) !== 4) return false
         // TO-DO: playing auto play if there's only one player than move and is NOT in the strip
         console.log("fourth")
         tokenObj.getPlayingTokens().map((i) => {
           if (!tokensCantMove.includes(i)) {
-            moveFunction({
+            return moveFunction({
               target: document.getElementById(`${color}token${i}`),
             });
           }
         });
       }
     }
-    return true;
+    return false; //means user can choose/no tokens out
   }
 
   function handleDiceRoll(won) {
@@ -394,6 +393,7 @@ function Game() {
     }
 
     let hasTokensOut = tokensOut.find((i) => {
+      console.log(i)
       return i.startsWith(dice.id);
     });
 
@@ -402,11 +402,11 @@ function Game() {
       hasTokensOut = false;
     }
 
-    console.log(canSkip);
+    console.log(canSkip);// true? skip, "moved"? skip, false? user can play
 
     
     //allows user to play if they have tokens out
-    if (hasTokensOut || canSkip === "moved") {
+    if (hasTokensOut && canSkip === false) {
       console.log("hehe")
       mapOn(allMapOverlay[turn]);
       return;
@@ -444,6 +444,7 @@ function Game() {
     const isSameColor = playerId.startsWith(token.slice(0, token.indexOf("token")));
     //player is token to be eaten
 
+    console.log(playerId)
     // Case 1: Capture opponent token (not safe block, different color)
     if (
       isSameBlock &&
@@ -453,7 +454,6 @@ function Game() {
     ) {
       
       
-
       const color = playerId.slice(0, playerId.indexOf("token")); // "blue", "red", etc.
       const tokenName = playerId.slice(playerId.indexOf("token")); // "token1", "token2", etc.
 
@@ -502,11 +502,12 @@ function Game() {
       // Update state
       setColorPositions(newPositions);
       tokensObj.setPositions([tokenName, initialPositions[homeIndex][tokenName]]);
-
+      delete currentPositions[`${color}${tokenName}`]
+      setCurrentPositions(currentPositions)
       // Remove from board (tokensOut)
       const tokenKey = `${color}${tokenName}`; // e.g., "bluetoken1"
       setTokensOut(prev => prev.filter(t => t !== tokenKey));
-
+      
       // Reset visual styling
       const tokenElement = document.getElementById(playerId);
       if (tokenElement) {
@@ -532,6 +533,7 @@ function Game() {
           }px)`;
         });
       }
+      console.log(tokensOut)
   // if (tokensToStack.length > 1) {
   //   const uniqueTokens = [...new Set(tokensToStack)]; // remove duplicates if any
   //   uniqueTokens.forEach((tokenEl, index) => {
@@ -631,6 +633,7 @@ function Game() {
         console.log(allBlueTokens.getMoveStatus());
         if (
           captured === true ||
+          allBlueTokens.getMoveStatus() === "won!" &&
           (diceNum === 6 && allBlueTokens.getMoveStatus() !== "won!")
         ) {
           diceOn(allDice[0]);
@@ -709,6 +712,7 @@ function Game() {
 
         if (
           captured === true ||
+          allRedTokens.getMoveStatus() === "won!" && 
           diceNum === 6 &&
           allRedTokens.getMoveStatus() !== "won!" 
         ) {
@@ -783,6 +787,7 @@ function Game() {
         );
         if (
           captured === true ||
+          allGreenTokens.getMoveStatus() === "won!" &&
           diceNum === 6 &&
           allGreenTokens.getMoveStatus() !== "won!" 
         ) {
@@ -860,6 +865,7 @@ function Game() {
         console.log(allYellowTokens.getMoveStatus());
         if (
           captured === true ||
+          allYellowTokens.getMoveStatus() === "won!" &&
           diceNum === 6 &&
           allYellowTokens.getMoveStatus() !== "won!" 
         ) {

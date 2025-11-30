@@ -9,7 +9,7 @@ function Dice({setDiceNum}) {
 
     const randomDice = () => {
     
-        const random =  Math.floor(Math.random() * 10);
+        const random =  Math.floor(Math.random() * 10) ;
         
         if (random >= 1 && random <= 6)  {
             rollDice(random);
