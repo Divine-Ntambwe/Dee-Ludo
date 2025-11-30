@@ -1,7 +1,7 @@
 
 export class redTokenObj {
   constructor(styles, setRedPositions) {
-    this.token1 = { x: 33.2, y: 10, block: 13 };
+    this.token1 = { x: 28.4, y: 46.5, block: 10 };
     this.token2 = { x: 33.2, y: 20, block: 13 };
     this.token3 = { x: 38.3, y: 10, block: 13 };
     this.token4 = { x: 38.3, y: 20, block: 13 };
@@ -108,11 +108,12 @@ export class redTokenObj {
         y = turnY;
         x = -turnX;
       }
-    } else if (token.block >= 50 && token.block < 52) {
+    } else if (token.block >= 50 && token.block < 51) {
       y = 0;
       x = -moveXBy;
       
-    } if (token.block >= 0 && token.block < 5) {
+    }else if (token.block >= 0 && token.block < 5) {
+      console.log("problem?")
       x = 0;
       y = -moveYBy;
     }else if (token.block >= 5 && token.block < 11) {
@@ -123,13 +124,15 @@ export class redTokenObj {
         x = -turnX;
       }
     } else if (token.block >= 11 && token.block < 12) {
+      console.log("or is it here")
       y = -moveYBy;
       x = 0;
       
-    } else if (token.block > 51 && token.block < 58) {
+    } else if (token.block >= 52 && token.block < 58) {
       this.tokensInStrip.push(num)
       y = 0;
       x = moveXBy;
+      console.log(`red${num} in home strip ${token.block}, ${x},${y}`)
       
     }
     return [x, y];
@@ -177,6 +180,7 @@ export class redTokenObj {
       token.block += 1;
       
       [x, y] = this.tokenMoves(token, 0, 0, tokenNo);
+      console.log(x,y)
     if (token.block === 57) {
         //if token gets home stops it from moving
         y = 0;
@@ -193,7 +197,7 @@ export class redTokenObj {
       } 
       if (count > dice) return ;
       if (token.block === 51) token.block = -1;
-      if (token.block === 11) token.block = 51;
+      if (token.block === 12) {token.block = 51;console.log("red entered")}
       let pos = { x: (token.x += x), y: (token.y += y),block:token.block };
       switch (tokenNo) {
         case "1":

@@ -83,9 +83,10 @@ export class greenTokenObj {
         x = turnX;
       }
     } else if (token.block >= 24 && token.block < 25) {
+      console.log("jj")
       y = 0;
       x = moveXBy;
-    } else if (token.block >= 26 && token.block < 31) {
+    } else if (token.block >= 25 && token.block < 31) {
       y = moveYBy;
       x = 0;
     } else if (token.block >= 31 && token.block < 37) {
@@ -109,10 +110,11 @@ export class greenTokenObj {
         x = -turnX;
       }
     } else if (token.block >= 50 && token.block < 52) {
+      console.log("first")
       y = 0;
       x = -moveXBy;
       
-    } if (token.block >= 0 && token.block < 5) {
+    }else if (token.block >= 0 && token.block < 5) {
       x = 0;
       y = -moveYBy;
     }else if (token.block >= 5 && token.block < 11) {
@@ -126,10 +128,11 @@ export class greenTokenObj {
       y = -moveYBy;
       x = 0;
       
-    } else if (token.block > 51 && token.block < 58) {
-      this.tokensInStrip.push(num)
+    } else if (token.block >= 52 && token.block < 58) {
       y = moveYBy;
       x = 0;
+      console.log(`green${num} in home strip ${token.block}`)
+      this.tokensInStrip.push(num)
       
     }
     return [x, y];
@@ -170,13 +173,14 @@ export class greenTokenObj {
         },
         token.block,
       ];
+
     tokenObj.classList.add(this.styles.bounce);
     const step = () => {
       count++;
       token.block += 1;
       
       [x, y] = this.tokenMoves(token, 0, 0, tokenNo);
-       if (token.block === 58) {
+       if (token.block === 57) {
         //if token gets home stops it from moving
         y = 0;
         x = 0;
@@ -186,15 +190,17 @@ export class greenTokenObj {
         if (this.tokensWon === 4) {
           this.moveStatus = "won!"
         } else {
+          console.log("tokenIn!")
           this.moveStatus = "tokenIn"
           return 
         }
       } 
       
-      console.log(token.block)
+      console.log(token.block,token.x,token.y)
+      console.log(y,x)
       if (count > dice) return;
       if (token.block === 51) {token.block = -1; console.log("turned")}
-      if (token.block === 25) {token.block = 51;}
+      if (token.block === 25) {token.block = 51; console.log("entered green")}
       let pos = { x: (token.x += x), y: (token.y += y),block:token.block };
       switch (tokenNo) {
         case "1":

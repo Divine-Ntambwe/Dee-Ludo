@@ -407,14 +407,19 @@ function Game() {
     
     //allows user to play if they have tokens out
     if (hasTokensOut && canSkip === false) {
-      console.log("hehe")
+      console.log("player can play")
       mapOn(allMapOverlay[turn]);
       return;
+    }
+    if (canSkip === "moved"){//used autoplay to move a token
+      console.log("auto played")
+      mapOn(allMapOverlay[turn]);
+      return
     }
 
     //skips to the next one
     setTimeout(() => {
-      console.log("here")
+      console.log("skipped to next player")
       mapOff(allMapOverlay[turn]);
       let inc = numOfPlayers === 2 ? 2 : 1;
       let minus = numOfPlayers >= 3 ? 1 : 0;
@@ -433,6 +438,7 @@ function Game() {
   let wasCapture = false;
 
   const safeBlocks = [1, 9, 14, 22, 27, 35, 40, 48];
+  const homeStrip = [52,53,54,55,56,57,58]
   const startBlocks = {blue:0,red: 13,green: 26,yellow: 39};
   console.log(playerBlocks)
 
@@ -450,7 +456,8 @@ function Game() {
       isSameBlock &&
       !isSameToken &&
       !isSameColor &&
-      !safeBlocks.includes(block)
+      !safeBlocks.includes(block) &&
+      !homeStrip.includes(block)
     ) {
       
       
@@ -516,7 +523,7 @@ function Game() {
       }
     }
     // Case 2: Multiple tokens on same block (including own or opponent on safe/start)
-    else if (isSameBlock && !isSameToken) {
+    else if (isSameBlock && !isSameToken && !homeStrip.includes(block)) {
       const element = document.getElementById(token);        // current moving token
       const otherElement = document.getElementById(playerId); // other token on same block
       if (element) tokensToStack.push(element);
@@ -633,7 +640,7 @@ function Game() {
         console.log(allBlueTokens.getMoveStatus());
         if (
           captured === true ||
-          allBlueTokens.getMoveStatus() === "won!" &&
+          allBlueTokens.getMoveStatus() === "tokenIn" ||
           (diceNum === 6 && allBlueTokens.getMoveStatus() !== "won!")
         ) {
           diceOn(allDice[0]);
@@ -712,7 +719,7 @@ function Game() {
 
         if (
           captured === true ||
-          allRedTokens.getMoveStatus() === "won!" && 
+          allRedTokens.getMoveStatus() === "tokenIn" ||
           diceNum === 6 &&
           allRedTokens.getMoveStatus() !== "won!" 
         ) {
@@ -785,9 +792,10 @@ function Game() {
           { ...currentPositions, [token]: block },
           setGreenPositions
         );
+        //change this
         if (
           captured === true ||
-          allGreenTokens.getMoveStatus() === "won!" &&
+          allGreenTokens.getMoveStatus() === "tokenIn" ||
           diceNum === 6 &&
           allGreenTokens.getMoveStatus() !== "won!" 
         ) {
@@ -865,7 +873,7 @@ function Game() {
         console.log(allYellowTokens.getMoveStatus());
         if (
           captured === true ||
-          allYellowTokens.getMoveStatus() === "won!" &&
+          allYellowTokens.getMoveStatus() === "tokenIn" ||
           diceNum === 6 &&
           allYellowTokens.getMoveStatus() !== "won!" 
         ) {
