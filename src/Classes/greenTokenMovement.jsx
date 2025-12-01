@@ -1,7 +1,7 @@
 
 export class greenTokenObj {
   constructor(styles, setGreenPositions) {
-    this.token1 = { x: 59.2, y: 10, block: 26 };
+    this.token1 = { x: 59.2, y: 10, block: 26};
     this.token2 = { x: 59.2, y: 20, block: 26 };
     this.token3 = { x: 64.2, y: 10, block: 26 };
     this.token4 = { x: 64.2, y: 20, block: 26 };
@@ -180,15 +180,16 @@ export class greenTokenObj {
       token.block += 1;
       
       [x, y] = this.tokenMoves(token, 0, 0, tokenNo);
-       if (token.block === 57) {
+       if (token.block  >= 56) {
         //if token gets home stops it from moving
         y = 0;
         x = 0;
         this.tokensWon += 1;
 
         this.playingTokens.splice(this.playingTokens.indexOf(tokenNo), 1);
-        if (this.tokensWon === 4) {
+        if (this.tokensWon === 4 ) {
           this.moveStatus = "won!"
+          return
         } else {
           console.log("tokenIn!")
           this.moveStatus = "tokenIn"

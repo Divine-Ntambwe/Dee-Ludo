@@ -146,7 +146,7 @@ export class blueTokenObj {
     let token;
     let count = 0;
     this.moveStatus = "ok"
-   
+   console.log("??")
     switch (tokenNo) {
       case "1":
         token = this.token1;
@@ -175,7 +175,7 @@ export class blueTokenObj {
       ];
       
      
-    // tokenObj.classList.add(this.styles.bounce);
+    tokenObj.classList.add(this.styles.bounce);
     const step = () => {
       count++;
       token.block += 1;
@@ -183,20 +183,25 @@ export class blueTokenObj {
       [x, y] = this.tokenMoves(token, 0, 0, tokenNo);
       console.log(token.block);
 
-      if (token.block === 57) {
+      if (token.block >= 56) {
         //if token gets home stops it from moving
         y = 0;
         x = 0;
         this.tokensWon += 1;
-
+    
         this.playingTokens.splice(this.playingTokens.indexOf(tokenNo), 1);
         if (this.tokensWon === 4) {
           this.moveStatus = "won!"
+          console.log("won")
+          console.log(this.moveStatus)
+          return
         } else {
           this.moveStatus = "tokenIn"
+          console.log("token in")
           return 
         }
       } 
+
 
       
 

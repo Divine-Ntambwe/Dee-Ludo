@@ -15,7 +15,7 @@ function App() {
   const [yellowPositions, setYellowPositions] = useState(null);
   // const [playerColors,setPlayerColors] = useState(null); //stores names of colors that are playing
   // const [colors,setColors] = useState(null); //stores actual colors of colors that are playing
-  const [numOfPlayers,setNumOfPlayers] = useState(3); //stores num of players playing
+  const [numOfPlayers,setNumOfPlayers] = useState(2); //stores num of players playing
   // const [playingNums,setPlayingNums] = useState(null); //stores the number of the colors playing
   const diceComp = useRef();
 

@@ -1,7 +1,7 @@
 
 export class redTokenObj {
   constructor(styles, setRedPositions) {
-    this.token1 = { x: 28.4, y: 46.5, block: 10 };
+    this.token1 = { x: 33.2, y: 10, block: 13 };
     this.token2 = { x: 33.2, y: 20, block: 13 };
     this.token3 = { x: 38.3, y: 10, block: 13 };
     this.token4 = { x: 38.3, y: 20, block: 13 };
@@ -128,13 +128,13 @@ export class redTokenObj {
       y = -moveYBy;
       x = 0;
       
-    } else if (token.block >= 52 && token.block < 58) {
+    } else if (token.block >= 52 && token.block < 58 || token.block === 12) {
       this.tokensInStrip.push(num)
       y = 0;
       x = moveXBy;
       console.log(`red${num} in home strip ${token.block}, ${x},${y}`)
       
-    }
+    } 
     return [x, y];
   }
 
@@ -181,7 +181,7 @@ export class redTokenObj {
       
       [x, y] = this.tokenMoves(token, 0, 0, tokenNo);
       console.log(x,y)
-    if (token.block === 57) {
+    if (token.block  >= 56) {
         //if token gets home stops it from moving
         y = 0;
         x = 0;

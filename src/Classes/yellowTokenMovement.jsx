@@ -93,7 +93,7 @@ export class yellowTokenObj {
         y = turnY;
         x = turnX;
       }
-    } else if (token.block >= 37 && token.block < 39) {
+    } else if (token.block >= 37 && token.block < 38) {
       y = moveYBy;
       x = 0;
     } else if (token.block >= 39 && token.block < 44) {
@@ -110,7 +110,7 @@ export class yellowTokenObj {
       y = 0;
       x = -moveXBy;
       
-    } if (token.block >= 0 && token.block < 5) {
+    }else if (token.block >= 0 && token.block < 5) {
       x = 0;
       y = -moveYBy;
     }else if (token.block >= 5 && token.block < 11) {
@@ -124,7 +124,7 @@ export class yellowTokenObj {
       y = -moveYBy;
       x = 0;
       
-    } else if (token.block > 51 && token.block < 58) {
+    } else if (token.block >= 52 && token.block < 58 || token.block === 38) {
       this.tokensInStrip.push(num)
       y = 0;
       x = -moveXBy;
@@ -178,7 +178,7 @@ export class yellowTokenObj {
       token.block += 1;
       
       [x, y] = this.tokenMoves(token, 0, 0, tokenNo);
-       if (token.block === 57) {
+       if (token.block  >= 56) {
         //if token gets home stops it from moving
         y = 0;
         x = 0;
@@ -196,7 +196,7 @@ export class yellowTokenObj {
       console.log(token.block)
       if (count > dice) return;
       if (token.block === 51) token.block = -1;
-      if (token.block === 37) token.block = 51;
+      if (token.block === 38) token.block = 51;
       let pos = { x: (token.x += x), y: (token.y += y),block:token.block };
       switch (tokenNo) {
         case "1":
