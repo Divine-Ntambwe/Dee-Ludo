@@ -183,7 +183,7 @@ export class blueTokenObj {
       [x, y] = this.tokenMoves(token, 0, 0, tokenNo);
       console.log(token.block);
 
-      if (token.block >= 56) {
+      if (token.block === 57) {
         //if token gets home stops it from moving
         y = 0;
         x = 0;

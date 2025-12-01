@@ -180,7 +180,7 @@ export class greenTokenObj {
       token.block += 1;
       
       [x, y] = this.tokenMoves(token, 0, 0, tokenNo);
-       if (token.block  >= 56) {
+       if (token.block  === 57) {
         //if token gets home stops it from moving
         y = 0;
         x = 0;

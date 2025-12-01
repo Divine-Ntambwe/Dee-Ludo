@@ -108,7 +108,7 @@ export class redTokenObj {
         y = turnY;
         x = -turnX;
       }
-    } else if (token.block >= 50 && token.block < 51) {
+    } else if (token.block >= 50 && token.block <= 51) {
       y = 0;
       x = -moveXBy;
       
@@ -181,16 +181,21 @@ export class redTokenObj {
       
       [x, y] = this.tokenMoves(token, 0, 0, tokenNo);
       console.log(x,y)
-    if (token.block  >= 56) {
+    if (token.block  === 57) {
+        console.log("crashhhh")
         //if token gets home stops it from moving
         y = 0;
         x = 0;
         this.tokensWon += 1;
+        console.log(this.tokensWon)
+        tokenObj.pointerEvents = "none"
 
         this.playingTokens.splice(this.playingTokens.indexOf(tokenNo), 1);
         if (this.tokensWon === 4) {
+          console.log("sigh")
           this.moveStatus = "won!"
         } else {
+          console.log("sigh2")
           this.moveStatus = "tokenIn"
           return 
         }
@@ -217,11 +222,11 @@ export class redTokenObj {
       }
       this.setRedPositions(this.getPositions());
     
-      setTimeout(step, 500);
+      setTimeout(step, 300);
     };
     setTimeout(() => {
       tokenObj.classList.remove(this.styles.bounce);
-    }, dice * 500);
+    }, dice * 300);
     return [step,token.block];
   }
 }

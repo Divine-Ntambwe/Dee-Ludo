@@ -35,7 +35,7 @@ import { useNavigate } from "react-router-dom";
 function Game() {
   const nav = useNavigate();
   const [currentPositions, setCurrentPositions] = useState({
-  
+
   });
   const initialPositions = [
     {
@@ -85,7 +85,7 @@ function Game() {
   const [diceName, setDiceName] = useState("one"); //
   const [diceNum, setDiceNum] = useState(null);
   const dice = useRef();
-  const [turn, setTurn] = useState(0);
+  const [turn, setTurn] = useState(1);
   const mapContainer = useRef();
   const diceContainer = useRef();
   const [tokensOut, setTokensOut] = useState([]);
@@ -244,7 +244,9 @@ function Game() {
 
   function autoPlay(tokenObj, color, moveFunction, diceNum) {
     if (tokenObj.getPlayingTokens().length === 1) {
-      if (diceNum === 6 && tokenObj.getPlayingTokens().length + tokenObj.getTokensWon() === 4)
+      if (diceNum === 6) {
+        if(tokenObj.getPlayingTokens().length + tokenObj.getTokensWon() !== 4) return
+      }
 
       console.log("one");
       mapContainer.current.style.pointerEvents = "none";
@@ -604,6 +606,7 @@ function Game() {
   }
 
   function handlePlayerWon(overLay) {
+    console.log(overLay)
     overLay.style.opacity = "1";
     overLay.style.border = "none";
     setTimeout(() => {
@@ -615,11 +618,13 @@ function Game() {
 
         case 3:
           if (colorsWon.length === 1) {
+            setOpen(true)
             alert("game over");
           }
 
         case 4:
           if (colorsWon.length === 2) {
+            setOpen(true)
             alert("game over");
           }
       }
@@ -661,8 +666,17 @@ function Game() {
 
       mapOff(allMapOverlay[turn], diceNum * 500);
       setTimeout(() => {
+        let block =
+          allBlueTokens.moveToken(e.target, num, diceNum, false)[1] + 1;
+        setCurrentPositions({ ...currentPositions, [token]: block });
+        const captured = handleCollisionDetection(
+          token,
+          block,
+          { ...currentPositions, [token]: block },
+          setBluePositions
+        );
         
-        if (allBlueTokens.getMoveStatus() === "won!") {
+        if (block === 57 && allBlueTokens.getTokensWon() >= 3) {
           console.log("eh eh")
           setColorsWon([...colorsWon, "blue"]);
           handlePlayerWon(blueOverlay.current);
@@ -680,7 +694,7 @@ function Game() {
           return;
         }
         console.log(allBlueTokens.getMoveStatus());
-        if (allBlueTokens.getMoveStatus() === "tokenIn") {
+        if (block === 57) {
           console.log(tokensOut, token);
           console.log(tokensOut.indexOf(token));
           tokensOut.splice(tokensOut.indexOf(token), 1);
@@ -691,15 +705,7 @@ function Game() {
           return;
         }
 
-        let block =
-          allBlueTokens.moveToken(e.target, num, diceNum, false)[1] + 1;
-        setCurrentPositions({ ...currentPositions, [token]: block });
-        const captured = handleCollisionDetection(
-          token,
-          block,
-          { ...currentPositions, [token]: block },
-          setBluePositions
-        );
+        
 
         //plays again if player gets a 6
         console.log(allBlueTokens.getMoveStatus());
@@ -757,33 +763,10 @@ function Game() {
         return canMove;
       }
       setRedPositions(allRedTokens.getPositions());
-      mapOff(allMapOverlay[turn], diceNum * 600);
+      mapOff(allMapOverlay[turn], diceNum * 100);
       setTimeout(() => {
-        console.log(allRedTokens.getMoveStatus());
-        if (allRedTokens.getMoveStatus() === "won!") {
-          setColorsWon([...colorsWon, "red"]);
-          handlePlayerWon(redOverlay.current);
-          let inc = numOfPlayers === 2 ? 2 : 1;
-          let minus = numOfPlayers >= 3 ? 1 : 0;
-          if (turn >= numOfPlayers - minus) {
-            setTurn(0);
-            diceOn(allDice[0]);
-          } else {
-            setTurn(turn + inc);
-            diceOn(allDice[turn + inc]);
-          }
-          return
-        }
-        if (allRedTokens.getMoveStatus() === "tokenIn") {
-          console.log(tokensOut, token);
-          console.log(tokensOut.indexOf(token));
-          tokensOut.splice(tokensOut.indexOf(token), 1);
-          console.log(tokensOut);
-          setTokensOut(tokensOut);
-          diceOn(allDice[0]);
-          e.target.style.transform =`translateY(${20+10*(num)}px) scale(0.8)`
-          return;
-        }
+        console.log(allRedTokens);
+        
 
         let block =
           allRedTokens.moveToken(e.target, num, diceNum, false)[1] + 1;
@@ -795,6 +778,37 @@ function Game() {
           setRedPositions
         );
 
+        console.log(allRedTokens.getTokensWon())
+        if (block === 57 && allRedTokens.getTokensWon() === 4) {
+          console.log("winning",redOverlay.current)
+          setColorsWon([...colorsWon, "red"]);
+          handlePlayerWon(redOverlay.current);
+          e.target.style.transform =`translateY(${20+10*(num)}px) scale(0.8)`
+          let inc = numOfPlayers === 2 ? 2 : 1;
+          let minus = numOfPlayers >= 3 ? 1 : 0;
+          if (turn >= numOfPlayers - minus) {
+            setTurn(0);
+            diceOn(allDice[0]);
+          } else {
+            setTurn(turn + inc);
+            diceOn(allDice[turn + inc]);
+          }
+          return
+        }
+        if (block === 57) {
+          console.log("got one in")
+          console.log(tokensOut, token);
+          console.log(tokensOut.indexOf(token));
+          tokensOut.splice(tokensOut.indexOf(token), 1);
+          console.log(tokensOut);
+          setTokensOut(tokensOut);
+          diceOn(allDice[1]);
+          e.target.style.transform =`translateY(${20+10*(num)}px) scale(0.8)`
+          return;
+        }
+
+        
+
         if (
           captured === true ||
           allRedTokens.getMoveStatus() === "tokenIn" ||
@@ -803,11 +817,24 @@ function Game() {
           diceOn(allDice[1]);
           return;
         }
-      }, 500 * diceNum);
+        let inc = numOfPlayers === 2 ? 2 : 1; //add to turn depending on num of players
+        let minus = numOfPlayers >= 3 ? 1 : 0; //minus from turn depending on num of players
+        if (turn >= numOfPlayers - minus) {
+          setTurn(0);
+          diceOn(allDice[0], allDice[turn]);
+        } else {
+          console.log("Relacccc");
+          setTurn(turn + inc);
+          diceOn(allDice[turn + inc], allDice[turn]);
+
+          // setTurn(0);
+          // diceOn(allDice[0], allDice[turn]);
+        }
+      }, 350 * diceNum); //MUST BE MORE THAN IN TOKEN MOVEMENT
     }
     return "moved";
   }
-
+  console.log(turn)
   function handleMoveGreen(e) {
     const diceNum = Number(localStorage.getItem("diceNum"));
     if (turn !== 2) return;
@@ -842,7 +869,7 @@ function Game() {
         if (allGreenTokens.getMoveStatus() === "won!") {
           setColorsWon([...colorsWon, "green"]);
           handlePlayerWon(greenOverlay.current);
-          e.target.style.transform =`translateX(${20+10*(num)}px) scale(0.8)`
+          e.target.style.transform =`translateX(${20+5*(num)}px) scale(0.8)`
           let inc = numOfPlayers === 2 ? 2 : 1;
           let minus = numOfPlayers >= 3 ? 1 : 0;
           if (turn >= numOfPlayers - minus) {
@@ -861,7 +888,7 @@ function Game() {
           console.log(tokensOut);
           setTokensOut(tokensOut);
           diceOn(allDice[2]);
-          e.target.style.transform =`translateX(${20+10*(num)}px) scale(0.8)`
+          e.target.style.transform =`translateX(${20+5*(num)}px) scale(0.8)`
           return;
         }
 
@@ -892,7 +919,7 @@ function Game() {
           setTurn(turn + inc);
           diceOn(allDice[turn + inc]);
         }
-      }, 500 * diceNum);
+      }, 550 * diceNum);
       //CHANGE THIS ^
     }
     return "moved";
@@ -968,7 +995,7 @@ function Game() {
         console.log(allYellowTokens.getMoveStatus());
         if (
           captured === true ||
-          (diceNum === 1 && 
+          (diceNum === 6 && 
           allYellowTokens.getMoveStatus() !== "won!")
         ) {
           diceOn(allDice[3]);
@@ -997,23 +1024,22 @@ function Game() {
     setOpen(false);
   };
   const handlePlayAgain = () => {};
-  const winnerToken = blueToken;
-  // winningPlayer === 1
-  //   ? blueToken
-  //   : winningPlayer === 2
-  //   ? redToken
-  //   : winningPlayer === 3
-  //   ? greenToken
-  //   : yellowToken;
+  const winnerToken = colorsWon[0] === "blue"
+    ? blueToken
+    : colorsWon[0] === "red"
+    ? redToken
+    : colorsWon[0] === "green"
+    ? greenToken
+    : yellowToken;
 
-  const winnerColor = "blue";
-  // winningPlayer === 1
-  //   ? "#00d0ff"
-  //   : winningPlayer === 2
-  //   ? "#ff2e63"
-  //   : winningPlayer === 3
-  //   ? "#39ff14"
-  //   : "#ffd700";
+  const winnerColor =
+  colorsWon[0] === "blue"
+    ? "#00d0ff"
+    :  colorsWon[0] === "red"
+    ? "#ff2e63"
+    : colorsWon[0] === "green"
+    ? "#39ff14"
+    : "#ffd700";
 
   //listening for space/enter click
   useEffect(() => {
@@ -1212,7 +1238,7 @@ function Game() {
               numOfPlayers === 2 && `Lost: ${colorsWon[0] === "blue"?"GREEN":"BLUE"}`
             }
             {
-              numOfPlayers === 3 && 
+              numOfPlayers === 3 && colorsWon.length == 2 &&
               <>
               {`2nd in command: ${colorsWon[1].toUpperCase()}`}
               <br/>
@@ -1220,7 +1246,7 @@ function Game() {
               </>
             }
             {
-              numOfPlayers === 4 && 
+              numOfPlayers === 4 &&  colorsWon.length == 3 &&
               <>
               {`2nd in command: ${colorsWon[1].toUpperCase()}`}
               <br/>
@@ -1335,6 +1361,7 @@ function Game() {
           }
         `}</style>
       </Dialog>}
+
       <div className={styles.homeIndicatorCont}>
         <div className={styles.mapOverlay}>
           <div ref={redOverlay}>
