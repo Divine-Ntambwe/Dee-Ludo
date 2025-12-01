@@ -183,6 +183,8 @@ export class yellowTokenObj {
         y = 0;
         x = 0;
         this.tokensWon += 1;
+        tokenObj.style.pointerEvents = "none"
+        tokenObj.style.pointerEvents = "not-allowed"
 
         this.playingTokens.splice(this.playingTokens.indexOf(tokenNo), 1);
         if (this.tokensWon === 4) {

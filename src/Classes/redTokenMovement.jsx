@@ -188,7 +188,8 @@ export class redTokenObj {
         x = 0;
         this.tokensWon += 1;
         console.log(this.tokensWon)
-        tokenObj.pointerEvents = "none"
+        tokenObj.style.pointerEvents = "none"
+        tokenObj.style.pointerEvents = "not-allowed"
 
         this.playingTokens.splice(this.playingTokens.indexOf(tokenNo), 1);
         if (this.tokensWon === 4) {

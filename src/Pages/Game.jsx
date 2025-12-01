@@ -34,9 +34,7 @@ import { useNavigate } from "react-router-dom";
 
 function Game() {
   const nav = useNavigate();
-  const [currentPositions, setCurrentPositions] = useState({
-
-  });
+  const [currentPositions, setCurrentPositions] = useState({});
   const initialPositions = [
     {
       token1: { x: 33.2, y: 75, block: 0 },
@@ -85,7 +83,7 @@ function Game() {
   const [diceName, setDiceName] = useState("one"); //
   const [diceNum, setDiceNum] = useState(null);
   const dice = useRef();
-  const [turn, setTurn] = useState(1);
+  const [turn, setTurn] = useState(0);
   const mapContainer = useRef();
   const diceContainer = useRef();
   const [tokensOut, setTokensOut] = useState([]);
@@ -245,7 +243,8 @@ function Game() {
   function autoPlay(tokenObj, color, moveFunction, diceNum) {
     if (tokenObj.getPlayingTokens().length === 1) {
       if (diceNum === 6) {
-        if(tokenObj.getPlayingTokens().length + tokenObj.getTokensWon() !== 4) return
+        if (tokenObj.getPlayingTokens().length + tokenObj.getTokensWon() !== 4)
+          return;
       }
 
       console.log("one");
@@ -327,7 +326,8 @@ function Game() {
         if (
           diceNum === 6 &&
           tokenObj.getPlayingTokens().length + tokenObj.getTokensWon() !== 4
-        ) return false;
+        )
+          return false;
         // TO-DO: playing auto play if there's only one player than move and is NOT in the strip
         console.log("fourth");
         tokenObj.getPlayingTokens().map((i) => {
@@ -356,12 +356,10 @@ function Game() {
           ? "yellow"
           : "blue";
       num = num < 4 ? num + 1 : 1;
-      if (document.getElementById(`${color}token${num}`)){
+      if (document.getElementById(`${color}token${num}`)) {
         document.getElementById(`${color}token${num}`).style.cursor = "pointer";
-        if (document.getElementById(`${color}token${num}`)){
-
+        if (document.getElementById(`${color}token${num}`)) {
         }
-
       }
     }
     //checks if token already won
@@ -468,10 +466,9 @@ function Game() {
       const isSameBlock = block === currentBlock;
       const isSameToken = playerId === token;
       const isSameColor = playerId.startsWith(
-      token.slice(0, token.indexOf("token"))
+        token.slice(0, token.indexOf("token"))
       );
       //player is token to be eaten
-
 
       console.log(playerId);
       // Case 1: Capture opponent token (not safe block, different color)
@@ -568,14 +565,23 @@ function Game() {
         const otherElement = document.getElementById(playerId); // other token on same block
         if (element) tokensToStack.push(element);
         if (otherElement) tokensToStack.push(otherElement);
-      } 
+      }
 
-      if ([1,14,27,40].includes(block) || [1,14,27,40].includes(currentBlock)){
-        if (Math.abs(currentBlock - block) == 1){
-        const element = document.getElementById(token); // current moving token
-        const otherElement = document.getElementById(playerId); // other token on same block
-        if (element) tokensToStack.push(element);
-        if (otherElement) tokensToStack.push(otherElement);
+      if (
+        [1, 14, 27, 40].includes(block) &&
+        [0, 13, 26, 39].includes(currentBlock) ||
+
+        [1, 14, 27, 40].includes(currentBlock) &&
+        [0, 13, 26, 39].includes(block) 
+        
+      ) {
+        if (!isSameToken && !homeStrip.includes(block) && !homeStrip.includes(currentBlock) && !isSameColor){
+          if (Math.abs(currentBlock - block) == 1) {
+            const element = document.getElementById(token); // current moving token
+            const otherElement = document.getElementById(playerId); // other token on same block
+            if (element) tokensToStack.push(element);
+            if (otherElement) tokensToStack.push(otherElement);
+          }
         }
       }
     });
@@ -606,25 +612,25 @@ function Game() {
   }
 
   function handlePlayerWon(overLay) {
-    console.log(overLay)
+    console.log(overLay);
     overLay.style.opacity = "1";
     overLay.style.border = "none";
     setTimeout(() => {
       overLay.children[0].style.visibility = "visible";
       switch (numOfPlayers) {
         case 2:
-          setOpen(true)
+          setOpen(true);
           break;
 
         case 3:
           if (colorsWon.length === 1) {
-            setOpen(true)
+            setOpen(true);
             alert("game over");
           }
 
         case 4:
           if (colorsWon.length === 2) {
-            setOpen(true)
+            setOpen(true);
             alert("game over");
           }
       }
@@ -675,12 +681,12 @@ function Game() {
           { ...currentPositions, [token]: block },
           setBluePositions
         );
-        
-        if (block === 57 && allBlueTokens.getTokensWon() >= 3) {
-          console.log("eh eh")
+
+        if (block === 57 && allBlueTokens.getTokensWon() === 4) {
+          console.log("eh eh");
           setColorsWon([...colorsWon, "blue"]);
           handlePlayerWon(blueOverlay.current);
-          e.target.style.transform =`translateY(${20+7*(num)}px) scale(0.8)`
+          e.target.style.transform = `translateX(${20 + 5 * num}px) scale(0.8)`;
           let inc = numOfPlayers === 2 ? 2 : 1; //add to turn depending on num of players
           let minus = numOfPlayers >= 3 ? 1 : 0; //minus from turn depending on num of players
           if (turn >= numOfPlayers - minus) {
@@ -702,11 +708,9 @@ function Game() {
           console.log(tokensOut);
           setTokensOut(tokensOut);
           diceOn(allDice[0]);
-          e.target.style.transform =`translateY(${20+7*(num)}px) scale(0.8)`
+          e.target.style.transform = `translateX(${20 + (5*num)}px) scale(0.8)`;
           return;
         }
-
-        
 
         //plays again if player gets a 6
         console.log(allBlueTokens.getMoveStatus());
@@ -725,11 +729,11 @@ function Game() {
           diceOn(allDice[0], allDice[turn]);
         } else {
           console.log("Relacccc");
-          setTurn(turn + inc);
-          diceOn(allDice[turn + inc], allDice[turn]);
+          // setTurn(turn + inc);
+          // diceOn(allDice[turn + inc], allDice[turn]);
 
-          // setTurn(0);
-          // diceOn(allDice[0], allDice[turn]);
+          setTurn(0);
+          diceOn(allDice[0], allDice[turn]);
         }
       }, diceNum * 350);
       //CHANGE THIS ^
@@ -767,7 +771,6 @@ function Game() {
       mapOff(allMapOverlay[turn], diceNum * 100);
       setTimeout(() => {
         console.log(allRedTokens);
-        
 
         let block =
           allRedTokens.moveToken(e.target, num, diceNum, false)[1] + 1;
@@ -779,12 +782,12 @@ function Game() {
           setRedPositions
         );
 
-        console.log(allRedTokens.getTokensWon())
+        console.log(allRedTokens.getTokensWon());
         if (block === 57 && allRedTokens.getTokensWon() === 4) {
-          console.log("winning",redOverlay.current)
+          console.log("winning", redOverlay.current);
           setColorsWon([...colorsWon, "red"]);
           handlePlayerWon(redOverlay.current);
-          e.target.style.transform =`translateY(${20+7*(num)}px) scale(0.8)`
+          e.target.style.transform = `translateY(${20 + 7 * num}px) scale(0.8)`;
           let inc = numOfPlayers === 2 ? 2 : 1;
           let minus = numOfPlayers >= 3 ? 1 : 0;
           if (turn >= numOfPlayers - minus) {
@@ -794,21 +797,19 @@ function Game() {
             setTurn(turn + inc);
             diceOn(allDice[turn + inc]);
           }
-          return
+          return;
         }
         if (block === 57) {
-          console.log("got one in")
+          console.log("got one in");
           console.log(tokensOut, token);
           console.log(tokensOut.indexOf(token));
           tokensOut.splice(tokensOut.indexOf(token), 1);
           console.log(tokensOut);
           setTokensOut(tokensOut);
           diceOn(allDice[1]);
-          e.target.style.transform =`translateY(${20+7*(num)}px) scale(0.8)`
+          e.target.style.transform = `translateY(${20 + 7 * num}px) scale(0.8)`;
           return;
         }
-
-        
 
         if (
           captured === true ||
@@ -835,7 +836,7 @@ function Game() {
     }
     return "moved";
   }
-  console.log(turn)
+  console.log(turn);
   function handleMoveGreen(e) {
     const diceNum = Number(localStorage.getItem("diceNum"));
     if (turn !== 2) return;
@@ -870,7 +871,7 @@ function Game() {
         if (allGreenTokens.getMoveStatus() === "won!") {
           setColorsWon([...colorsWon, "green"]);
           handlePlayerWon(greenOverlay.current);
-          e.target.style.transform =`translateX(${20+5*(num)}px) scale(0.8)`
+          e.target.style.transform = `translateX(${20 + 5 * num}px) scale(0.8)`;
           let inc = numOfPlayers === 2 ? 2 : 1;
           let minus = numOfPlayers >= 3 ? 1 : 0;
           if (turn >= numOfPlayers - minus) {
@@ -880,7 +881,7 @@ function Game() {
             setTurn(turn + inc);
             diceOn(allDice[turn + inc]);
           }
-          return
+          return;
         }
         if (allGreenTokens.getMoveStatus() === "tokenIn") {
           console.log(tokensOut, token);
@@ -889,7 +890,7 @@ function Game() {
           console.log(tokensOut);
           setTokensOut(tokensOut);
           diceOn(allDice[2]);
-          e.target.style.transform =`translateX(${20+5*(num)}px) scale(0.8)`
+          e.target.style.transform = `translateX(${20 + 5 * num}px) scale(0.8)`;
           return;
         }
 
@@ -956,20 +957,20 @@ function Game() {
 
       setTimeout(() => {
         console.log(allYellowTokens.getMoveStatus());
-         if (allYellowTokens.getMoveStatus() === "won!") {
+        if (allYellowTokens.getMoveStatus() === "won!") {
           setColorsWon([...colorsWon, "yellow"]);
           handlePlayerWon(yellowOverlay.current);
-          e.target.style.transform =`translateY(${20+7*(num)}px) scale(0.8)`
-           let inc = numOfPlayers === 2 ? 2 : 1;
-        let minus = numOfPlayers >= 3 ? 1 : 0;
-        if (turn >= numOfPlayers - minus) {
-          setTurn(0);
-          diceOn(allDice[0]);
-        } else {
-          setTurn(turn + inc);
-          diceOn(allDice[turn + inc]);
-        }
-        return
+          e.target.style.transform = `translateY(${20 + 7 * num}px) scale(0.8)`;
+          let inc = numOfPlayers === 2 ? 2 : 1;
+          let minus = numOfPlayers >= 3 ? 1 : 0;
+          if (turn >= numOfPlayers - minus) {
+            setTurn(0);
+            diceOn(allDice[0]);
+          } else {
+            setTurn(turn + inc);
+            diceOn(allDice[turn + inc]);
+          }
+          return;
         }
         if (allYellowTokens.getMoveStatus() === "tokenIn") {
           console.log(tokensOut, token);
@@ -978,11 +979,9 @@ function Game() {
           console.log(tokensOut);
           setTokensOut(tokensOut);
           diceOn(allDice[3]);
-          e.target.style.transform =`translateY(${20+7*(num)}px) scale(0.8)`
+          e.target.style.transform = `translateY(${20 + 7 * num}px) scale(0.8)`;
           return;
         }
-
-       
 
         let block =
           allYellowTokens.moveToken(e.target, num, diceNum, false)[1] + 1;
@@ -997,8 +996,7 @@ function Game() {
         console.log(allYellowTokens.getMoveStatus());
         if (
           captured === true ||
-          (diceNum === 6 && 
-          allYellowTokens.getMoveStatus() !== "won!")
+          (diceNum === 6 && allYellowTokens.getMoveStatus() !== "won!")
         ) {
           diceOn(allDice[3]);
           return;
@@ -1017,7 +1015,7 @@ function Game() {
     return "moved";
   }
 
-  const [open,setOpen] = useState(false)
+  const [open, setOpen] = useState(false);
   const handleClickOpen = () => {
     setOpen(true);
   };
@@ -1026,22 +1024,23 @@ function Game() {
     setOpen(false);
   };
   const handlePlayAgain = () => {};
-  const winnerToken = colorsWon[0] === "blue"
-    ? blueToken
-    : colorsWon[0] === "red"
-    ? redToken
-    : colorsWon[0] === "green"
-    ? greenToken
-    : yellowToken;
+  const winnerToken =
+    colorsWon[0] === "blue"
+      ? blueToken
+      : colorsWon[0] === "red"
+      ? redToken
+      : colorsWon[0] === "green"
+      ? greenToken
+      : yellowToken;
 
   const winnerColor =
-  colorsWon[0] === "blue"
-    ? "#00d0ff"
-    :  colorsWon[0] === "red"
-    ? "#ff2e63"
-    : colorsWon[0] === "green"
-    ? "#39ff14"
-    : "#ffd700";
+    colorsWon[0] === "blue"
+      ? "#00d0ff"
+      : colorsWon[0] === "red"
+      ? "#ff2e63"
+      : colorsWon[0] === "green"
+      ? "#39ff14"
+      : "#ffd700";
 
   //listening for space/enter click
   useEffect(() => {
@@ -1060,7 +1059,7 @@ function Game() {
         window.removeEventListener("keydown", handleKeyDown);
         setTimeout(() => {
           window.addEventListener("keydown", handleKeyDown);
-        }, 3000);
+        }, 1500);
       }
     };
     window.addEventListener("keydown", handleKeyDown);
@@ -1069,210 +1068,212 @@ function Game() {
 
   return (
     <>
-      {Boolean(colorsWon.length) && <Dialog
-        open={open}
-        // onClose={onClose}
-        PaperProps={{
-          sx: {
-            background: "transparent",
-            boxShadow: "none",
-            overflow: "hidden",
-            borderRadius: "24px",
-            maxWidth: 460,
-          },
-        }}
-      >
-        {/* Animated Nebula Background */}
-        <Box
-          sx={{
-            position: "absolute",
-            inset: 0,
-            background:
-              "radial-gradient(circle at 30% 70%, #120038 0%, #000000 70%)",
-            backgroundSize: "200% 200%",
-            animation: "nebula 20s ease infinite",
-            zIndex: -2,
-          }}
-        />
-        <Box
-          sx={{
-            position: "absolute",
-            inset: 0,
-            background:
-              "url('data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22100%22 height=%22100%22><defs><radialGradient id=%22star%22><stop offset=%220%25%22 stop-color=%22%23ffffff%22/><stop offset=%22100%25%22 stop-color=%22%23a0a0ff%22 stop-opacity=%220%22/></radialGradient></defs><circle cx=%2250%22 cy=%2250%22 r=%221%22 fill=%22url(%23star)%22 opacity=%220.8%22/><circle cx=%2220%22 cy=%2280%22 r=%221.5%22 fill=%22url(%23star)%22 opacity=%220.6%22/><circle cx=%2280%22 cy=%2230%22 r=%221%22 fill=%22url(%23star)%22 opacity=%220.7%22/></svg>')",
-            backgroundSize: "80px 80px",
-            opacity: 0.4,
-            zIndex: -1,
-          }}
-        />
-
-        {/* Main Content */}
-        <DialogContent
-          sx={{
-            background: "rgba(10, 0, 40, 0.7)",
-            backdropFilter: "blur(12px)",
-            border: "2px solid rgba(138, 43, 226, 0.5)",
-            borderRadius: "24px",
-            textAlign: "center",
-            py: 6,
-            px: 4,
+      {Boolean(colorsWon.length) && (
+        <Dialog
+          open={open}
+          // onClose={onClose}
+          PaperProps={{
+            sx: {
+              background: "transparent",
+              boxShadow: "none",
+              overflow: "hidden",
+              borderRadius: "24px",
+              maxWidth: 460,
+            },
           }}
         >
-          {/* Cosmic Title */}
-          <Typography
-            variant="h3"
-            sx={{
-              background: "linear-gradient(90deg, #00ffff, #ff00ff, #ffff00)",
-              backgroundSize: "200%",
-              WebkitBackgroundClip: "text",
-              WebkitTextFillColor: "transparent",
-              fontWeight: "bold",
-              fontFamily: "'Orbitron', 'Rajdhani', sans-serif",
-              letterSpacing: "4px",
-              mb: 2,
-              animation: "rainbow 8s linear infinite",
-            }}
-          >
-            VICTORY IN THE VOID
-          </Typography>
-
-          <Typography
-            variant="h5"
-            sx={{
-              color: "#e0e0ff",
-              mb: 4,
-              fontFamily: "'Exo 2', sans-serif",
-              textShadow: "0 0 20px #ffffff",
-            }}
-          >
-            The stars have aligned...
-          </Typography>
-
-          {/* Winner Token with Halo & Orbit Effect */}
+          {/* Animated Nebula Background */}
           <Box
             sx={{
-              position: "relative",
-              display: "inline-block",
-              my: 3,
+              position: "absolute",
+              inset: 0,
+              background:
+                "radial-gradient(circle at 30% 70%, #120038 0%, #000000 70%)",
+              backgroundSize: "200% 200%",
+              animation: "nebula 20s ease infinite",
+              zIndex: -2,
             }}
-          >
-            <Box
-              sx={{
-                position: "absolute",
-                inset: -20,
-                border: "3px solid",
-                borderColor: winnerColor,
-                borderRadius: "50%",
-                opacity: 0.6,
-                animation: "orbit 6s linear infinite",
-              }}
-            />
-            <Box
-              sx={{
-                position: "absolute",
-                inset: -35,
-                border: "1px dashed",
-                borderColor: winnerColor,
-                borderRadius: "50%",
-                opacity: 0.4,
-                animation: "orbit 10s linear infinite reverse",
-              }}
-            />
-            <img
-              src={winnerToken}
-              alt="Winner Token"
-              style={{
-                width: 120,
-                height: 120,
-                borderRadius: "50%",
-                border: `8px solid ${winnerColor}`,
-                boxShadow: `0 0 60px ${winnerColor}, inset 0 0 30px ${winnerColor}`,
-                animation: "float 4s ease-in-out infinite",
-              }}
-            />
-          </Box>
+          />
+          <Box
+            sx={{
+              position: "absolute",
+              inset: 0,
+              background:
+                "url('data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22100%22 height=%22100%22><defs><radialGradient id=%22star%22><stop offset=%220%25%22 stop-color=%22%23ffffff%22/><stop offset=%22100%25%22 stop-color=%22%23a0a0ff%22 stop-opacity=%220%22/></radialGradient></defs><circle cx=%2250%22 cy=%2250%22 r=%221%22 fill=%22url(%23star)%22 opacity=%220.8%22/><circle cx=%2220%22 cy=%2280%22 r=%221.5%22 fill=%22url(%23star)%22 opacity=%220.6%22/><circle cx=%2280%22 cy=%2230%22 r=%221%22 fill=%22url(%23star)%22 opacity=%220.7%22/></svg>')",
+              backgroundSize: "80px 80px",
+              opacity: 0.4,
+              zIndex: -1,
+            }}
+          />
 
-          <Typography
-            variant="h4"
+          {/* Main Content */}
+          <DialogContent
             sx={{
-              color: winnerColor,
-              fontWeight: "bold",
-              mt: 3,
-              mb: 1,
-              fontFamily: "'Orbitron', sans-serif",
-              textShadow: `0 0 30px ${winnerColor}`,
-            }}
-          >
-            PLAYER {colorsWon[0].toUpperCase()} DOMINATES THE GALAXY
-          </Typography>
-          <br/>
-           <Box
-            sx={{
-              display: "inline-block",
+              background: "rgba(10, 0, 40, 0.7)",
+              backdropFilter: "blur(12px)",
+              border: "2px solid rgba(138, 43, 226, 0.5)",
+              borderRadius: "24px",
+              textAlign: "center",
+              py: 6,
               px: 4,
-              py: 2,
-              background: "rgba(138, 43, 226, 0.3)",
-              border: "2px solid #8a2be2",
-              borderRadius: "50px",
-              animation: "pulse 3s infinite",
-
             }}
           >
+            {/* Cosmic Title */}
             <Typography
-              variant="h6"
-              sx={{ color: "#ffffff", fontWeight: "bold" }}
+              variant="h3"
+              sx={{
+                background: "linear-gradient(90deg, #00ffff, #ff00ff, #ffff00)",
+                backgroundSize: "200%",
+                WebkitBackgroundClip: "text",
+                WebkitTextFillColor: "transparent",
+                fontWeight: "bold",
+                fontFamily: "'Orbitron', 'Rajdhani', sans-serif",
+                letterSpacing: "4px",
+                mb: 2,
+                animation: "rainbow 8s linear infinite",
+              }}
             >
-              SUPREME COMMANDER
+              VICTORY IN THE VOID
             </Typography>
-          </Box>
 
-          <Typography
-            variant="body1"
+            <Typography
+              variant="h5"
+              sx={{
+                color: "#e0e0ff",
+                mb: 4,
+                fontFamily: "'Exo 2', sans-serif",
+                textShadow: "0 0 20px #ffffff",
+              }}
+            >
+              The stars have aligned...
+            </Typography>
+
+            {/* Winner Token with Halo & Orbit Effect */}
+            <Box
+              sx={{
+                position: "relative",
+                display: "inline-block",
+                my: 3,
+              }}
+            >
+              <Box
+                sx={{
+                  position: "absolute",
+                  inset: -20,
+                  border: "3px solid",
+                  borderColor: winnerColor,
+                  borderRadius: "50%",
+                  opacity: 0.6,
+                  animation: "orbit 6s linear infinite",
+                }}
+              />
+              <Box
+                sx={{
+                  position: "absolute",
+                  inset: -35,
+                  border: "1px dashed",
+                  borderColor: winnerColor,
+                  borderRadius: "50%",
+                  opacity: 0.4,
+                  animation: "orbit 10s linear infinite reverse",
+                }}
+              />
+              <img
+                src={winnerToken}
+                alt="Winner Token"
+                style={{
+                  width: 120,
+                  height: 120,
+                  borderRadius: "50%",
+                  border: `8px solid ${winnerColor}`,
+                  boxShadow: `0 0 60px ${winnerColor}, inset 0 0 30px ${winnerColor}`,
+                  animation: "float 4s ease-in-out infinite",
+                }}
+              />
+            </Box>
+
+            <Typography
+              variant="h4"
+              sx={{
+                color: winnerColor,
+                fontWeight: "bold",
+                mt: 3,
+                mb: 1,
+                fontFamily: "'Orbitron', sans-serif",
+                textShadow: `0 0 30px ${winnerColor}`,
+              }}
+            >
+              PLAYER {colorsWon[0].toUpperCase()} DOMINATES THE GALAXY
+            </Typography>
+            <br />
+            <Box
+              sx={{
+                display: "inline-block",
+                px: 4,
+                py: 2,
+                background: "rgba(138, 43, 226, 0.3)",
+                border: "2px solid #8a2be2",
+                borderRadius: "50px",
+                animation: "pulse 3s infinite",
+              }}
+            >
+              <Typography
+                variant="h6"
+                sx={{ color: "#ffffff", fontWeight: "bold" }}
+              >
+                SUPREME COMMANDER
+              </Typography>
+            </Box>
+
+            <Typography
+              variant="body1"
+              sx={{
+                color: "#bbbbff",
+                fontStyle: "italic",
+                mb: 4,
+                marginTop: "30px",
+                fontSize: "1.5em",
+              }}
+            >
+              {numOfPlayers === 2 &&
+                `Lost: ${colorsWon[0] === "blue" ? "GREEN" : "BLUE"}`}
+              {numOfPlayers === 3 && colorsWon.length == 2 && (
+                <>
+                  {`2nd in command: ${colorsWon[1].toUpperCase()}`}
+                  <br />
+                  {`Lost: ${["red", "blue", "green"]
+                    .find((i) => {
+                      return !colorsWon.includes(i);
+                    })
+                    .toUpperCase()}`}
+                </>
+              )}
+              {numOfPlayers === 4 && colorsWon.length == 3 && (
+                <>
+                  {`2nd in command: ${colorsWon[1].toUpperCase()}`}
+                  <br />
+                  {`3rd in command: ${colorsWon[2].toUpperCase()}`}
+                  <br />
+                  {`Lost: ${["red", "blue", "green"]
+                    .find((i) => {
+                      return !colorsWon.includes(i);
+                    })
+                    .toUpperCase()}`}
+                </>
+              )}
+            </Typography>
+          </DialogContent>
+
+          <DialogActions
             sx={{
-              color: "#bbbbff",
-              fontStyle: "italic",
-              mb: 4,
-              marginTop:"30px",
-              fontSize:"1.5em"
+              justifyContent: "center",
+              background: "rgba(0, 0, 50, 0.6)",
+              py: 3,
+              gap: 3,
+              borderTop: "1px solid rgba(138, 43, 226, 0.3)",
             }}
           >
-            {
-              numOfPlayers === 2 && `Lost: ${colorsWon[0] === "blue"?"GREEN":"BLUE"}`
-            }
-            {
-              numOfPlayers === 3 && colorsWon.length == 2 &&
-              <>
-              {`2nd in command: ${colorsWon[1].toUpperCase()}`}
-              <br/>
-              {`Lost: ${["red","blue","green"].find((i)=>{return !colorsWon.includes(i)}).toUpperCase()}`}
-              </>
-            }
-            {
-              numOfPlayers === 4 &&  colorsWon.length == 3 &&
-              <>
-              {`2nd in command: ${colorsWon[1].toUpperCase()}`}
-              <br/>
-               {`3rd in command: ${colorsWon[2].toUpperCase()}`}
-              <br/>
-              {`Lost: ${["red","blue","green"].find((i)=>{return !colorsWon.includes(i)}).toUpperCase()}`}
-              </>
-            }
-          </Typography>
-
-        
-         
-        </DialogContent>
-
-        <DialogActions
-          sx={{
-            justifyContent: "center",
-            background: "rgba(0, 0, 50, 0.6)",
-            py: 3,
-            gap: 3,
-            borderTop: "1px solid rgba(138, 43, 226, 0.3)",
-          }}
-        >
-          {/* <Button
+            {/* <Button
             // onClick={onPlayAgain}
             variant="contained"
             size="large"
@@ -1295,74 +1296,77 @@ function Game() {
             NEW MISSION
           </Button> */}
 
-          <Button
-            onClick={()=>{nav("/")}}
-            variant="outlined"
-            size="large"
-            sx={{
-              color: "#00ffff",
-              borderColor: "#00ffff",
-              px: 4,
-              py: 1.5,
-              borderRadius: "50px",
-              fontWeight: "bold",
-              "&:hover": {
-                background: "rgba(0, 255, 255, 0.1)",
+            <Button
+              onClick={() => {
+                nav("/");
+              }}
+              variant="outlined"
+              size="large"
+              sx={{
+                color: "#00ffff",
                 borderColor: "#00ffff",
-              },
-            }}
-          >
-            RETURN TO BASE
-          </Button>
-        </DialogActions>
+                px: 4,
+                py: 1.5,
+                borderRadius: "50px",
+                fontWeight: "bold",
+                "&:hover": {
+                  background: "rgba(0, 255, 255, 0.1)",
+                  borderColor: "#00ffff",
+                },
+              }}
+            >
+              RETURN TO BASE
+            </Button>
+          </DialogActions>
 
-        {/* CSS Animations */}
-        <style jsx>{`
-          @keyframes nebula {
-            0%,
-            100% {
-              background-position: 0% 50%;
+          {/* CSS Animations */}
+          <style jsx>{`
+            @keyframes nebula {
+              0%,
+              100% {
+                background-position: 0% 50%;
+              }
+              50% {
+                background-position: 100% 50%;
+              }
             }
-            50% {
-              background-position: 100% 50%;
+            @keyframes rainbow {
+              0% {
+                background-position: 0%;
+              }
+              100% {
+                background-position: 200%;
+              }
             }
-          }
-          @keyframes rainbow {
-            0% {
-              background-position: 0%;
+            @keyframes float {
+              0%,
+              100% {
+                transform: translateY(0);
+              }
+              50% {
+                transform: translateY(-20px);
+              }
             }
-            100% {
-              background-position: 200%;
+            @keyframes orbit {
+              from {
+                transform: rotate(0deg);
+              }
+              to {
+                transform: rotate(360deg);
+              }
             }
-          }
-          @keyframes float {
-            0%,
-            100% {
-              transform: translateY(0);
+            @keyframes pulse {
+              0%,
+              100% {
+                box-shadow: 0 0 20px #8a2be2;
+              }
+              50% {
+                box-shadow: 0 0 40px #ff00ff;
+              }
             }
-            50% {
-              transform: translateY(-20px);
-            }
-          }
-          @keyframes orbit {
-            from {
-              transform: rotate(0deg);
-            }
-            to {
-              transform: rotate(360deg);
-            }
-          }
-          @keyframes pulse {
-            0%,
-            100% {
-              box-shadow: 0 0 20px #8a2be2;
-            }
-            50% {
-              box-shadow: 0 0 40px #ff00ff;
-            }
-          }
-        `}</style>
-      </Dialog>}
+          `}</style>
+        </Dialog>
+      )}
 
       <div className={styles.homeIndicatorCont}>
         <div className={styles.mapOverlay}>
@@ -1475,16 +1479,15 @@ function Game() {
           {bluePositions &&
             Object.entries(bluePositions).map(([token, pos]) => (
               <>
-              <div className={styles.tokenCont}>
-
-                <img
-                  id={`blue${token}`}
-                  onClick={handleMoveBlue}
-                  className={`${styles.tokens}`}
-                  src={blueToken}
-                  style={{ left: `${pos.x}vw`, top: `${pos.y}vh` }}
-                />
-              </div>
+                <div className={styles.tokenCont}>
+                  <img
+                    id={`blue${token}`}
+                    onClick={handleMoveBlue}
+                    className={`${styles.tokens}`}
+                    src={blueToken}
+                    style={{ left: `${pos.x}vw`, top: `${pos.y}vh` }}
+                  />
+                </div>
               </>
             ))}
           {redPositions &&
@@ -1520,19 +1523,18 @@ function Game() {
             numOfPlayers === 4 &&
             Object.entries(yellowPositions).map(([token, pos]) => (
               <>
-              <div className={styles.tokenCont}>
-
-              <img
-                id={`yellow${token}`}
-                onClick={handleMoveYellow}
-                className={styles.tokens}
-                src={yellowToken}
-                style={{
-                  left: `${pos.x}vw`,
-                  top: `${pos.y}vh`,
-                }}
-              />
-              </div>
+                <div className={styles.tokenCont}>
+                  <img
+                    id={`yellow${token}`}
+                    onClick={handleMoveYellow}
+                    className={styles.tokens}
+                    src={yellowToken}
+                    style={{
+                      left: `${pos.x}vw`,
+                      top: `${pos.y}vh`,
+                    }}
+                  />
+                </div>
               </>
             ))}
         </div>
