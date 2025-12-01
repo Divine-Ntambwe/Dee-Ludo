@@ -988,7 +988,7 @@ function Game() {
     return "moved";
   }
 
-  const [open,setOpen] = useState()
+  const [open,setOpen] = useState(false)
   const handleClickOpen = () => {
     setOpen(true);
   };
@@ -1041,8 +1041,8 @@ function Game() {
 
   return (
     <>
-      <Dialog
-        open={true}
+      {Boolean(colorsWon.length) && <Dialog
+        open={open}
         // onClose={onClose}
         PaperProps={{
           sx: {
@@ -1334,7 +1334,7 @@ function Game() {
             }
           }
         `}</style>
-      </Dialog>
+      </Dialog>}
       <div className={styles.homeIndicatorCont}>
         <div className={styles.mapOverlay}>
           <div ref={redOverlay}>
