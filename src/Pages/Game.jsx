@@ -570,7 +570,7 @@ function Game() {
         if (otherElement) tokensToStack.push(otherElement);
       } 
 
-      if ([1,14,27,40].includes(block)){
+      if ([1,14,27,40].includes(block) || [1,14,27,40].includes(currentBlock)){
         if (Math.abs(currentBlock - block) == 1){
         const element = document.getElementById(token); // current moving token
         const otherElement = document.getElementById(playerId); // other token on same block
@@ -680,6 +680,7 @@ function Game() {
           console.log("eh eh")
           setColorsWon([...colorsWon, "blue"]);
           handlePlayerWon(blueOverlay.current);
+          e.target.style.transform =`translateY(${20+7*(num)}px) scale(0.8)`
           let inc = numOfPlayers === 2 ? 2 : 1; //add to turn depending on num of players
           let minus = numOfPlayers >= 3 ? 1 : 0; //minus from turn depending on num of players
           if (turn >= numOfPlayers - minus) {
@@ -701,7 +702,7 @@ function Game() {
           console.log(tokensOut);
           setTokensOut(tokensOut);
           diceOn(allDice[0]);
-          e.target.style.transform =`translateY(${20+10*(num)}px) scale(0.8)`
+          e.target.style.transform =`translateY(${20+7*(num)}px) scale(0.8)`
           return;
         }
 
@@ -730,7 +731,7 @@ function Game() {
           // setTurn(0);
           // diceOn(allDice[0], allDice[turn]);
         }
-      }, diceNum * 500);
+      }, diceNum * 350);
       //CHANGE THIS ^
     }
     return "moved";
@@ -783,7 +784,7 @@ function Game() {
           console.log("winning",redOverlay.current)
           setColorsWon([...colorsWon, "red"]);
           handlePlayerWon(redOverlay.current);
-          e.target.style.transform =`translateY(${20+10*(num)}px) scale(0.8)`
+          e.target.style.transform =`translateY(${20+7*(num)}px) scale(0.8)`
           let inc = numOfPlayers === 2 ? 2 : 1;
           let minus = numOfPlayers >= 3 ? 1 : 0;
           if (turn >= numOfPlayers - minus) {
@@ -803,7 +804,7 @@ function Game() {
           console.log(tokensOut);
           setTokensOut(tokensOut);
           diceOn(allDice[1]);
-          e.target.style.transform =`translateY(${20+10*(num)}px) scale(0.8)`
+          e.target.style.transform =`translateY(${20+7*(num)}px) scale(0.8)`
           return;
         }
 
@@ -919,7 +920,7 @@ function Game() {
           setTurn(turn + inc);
           diceOn(allDice[turn + inc]);
         }
-      }, 550 * diceNum);
+      }, 350 * diceNum);
       //CHANGE THIS ^
     }
     return "moved";
@@ -958,6 +959,7 @@ function Game() {
          if (allYellowTokens.getMoveStatus() === "won!") {
           setColorsWon([...colorsWon, "yellow"]);
           handlePlayerWon(yellowOverlay.current);
+          e.target.style.transform =`translateY(${20+7*(num)}px) scale(0.8)`
            let inc = numOfPlayers === 2 ? 2 : 1;
         let minus = numOfPlayers >= 3 ? 1 : 0;
         if (turn >= numOfPlayers - minus) {
@@ -976,7 +978,7 @@ function Game() {
           console.log(tokensOut);
           setTokensOut(tokensOut);
           diceOn(allDice[3]);
-          e.target.style.transform =`translateY(${20+10*(num)}px) scale(0.8)`
+          e.target.style.transform =`translateY(${20+7*(num)}px) scale(0.8)`
           return;
         }
 
@@ -1010,7 +1012,7 @@ function Game() {
           setTurn(turn + inc);
           diceOn(allDice[turn + inc]);
         }
-      }, 500 * diceNum);
+      }, 350 * diceNum);
     }
     return "moved";
   }
@@ -1438,7 +1440,7 @@ function Game() {
                   diceOff(redDice);
                   setTimeout(() => {
                     handleDiceRoll();
-                  }, 3000);
+                  }, 1500);
                 }}
               >
                 <Dice setDiceNum={setDiceNum} />
@@ -1460,7 +1462,7 @@ function Game() {
                   diceOff(blueDice);
                   setTimeout(() => {
                     handleDiceRoll();
-                  }, 3000);
+                  }, 1500);
                 }}
               >
                 <Dice id="h" setDiceNum={setDiceNum} />
@@ -1554,7 +1556,7 @@ function Game() {
                   diceOff(greenDice);
                   setTimeout(() => {
                     handleDiceRoll();
-                  }, 3000);
+                  }, 1500);
                 }}
               >
                 <Dice setDiceNum={setDiceNum} />
@@ -1575,7 +1577,7 @@ function Game() {
                   diceOff(yellowDice);
                   setTimeout(() => {
                     handleDiceRoll();
-                  }, 3000);
+                  }, 1500);
                 }}
               >
                 <Dice setDiceNum={setDiceNum} />

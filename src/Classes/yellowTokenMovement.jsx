@@ -216,11 +216,11 @@ export class yellowTokenObj {
       }
       this.setYellowPositions(this.getPositions());
     
-      setTimeout(step, 500);
+      setTimeout(step, 300);
     };
     setTimeout(() => {
       tokenObj.classList.remove(this.styles.bounce);
-    }, dice * 500);
+    }, dice * 300);
     return [step,token.block];
   }
 }

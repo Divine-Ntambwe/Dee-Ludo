@@ -9,8 +9,8 @@ function Dice({setDiceNum}) {
 
     const randomDice = () => {
     
-        const random =  Math.floor(Math.random() * 10) ;
-        
+        let random =  Math.floor(Math.random() * 2) ;
+        random = [1,6][random]
         if (random >= 1 && random <= 6)  {
             rollDice(random);
             setDiceNum(random)
@@ -26,7 +26,7 @@ function Dice({setDiceNum}) {
 
 const rollDice = random => {
      const dice = diceComp.current;
-    dice.style.animation = 'rolling 2s';
+    dice.style.animation = 'rolling 1s';
 
     setTimeout(() => {
 
@@ -61,7 +61,7 @@ const rollDice = random => {
 
         dice.style.animation = 'none';
 
-    }, 2050);
+    }, 1050);
 
 }
   return (
